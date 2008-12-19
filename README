@@ -29,8 +29,8 @@ deployment of SIF easy.
 == Implementation Information (sifinfo.org)
 
 This implementation is based on version 2.2 of the SIF Specification. The 
-Specification is in {PDF}[link:../SIF%20ImplementationSpecification.pdf] format 
-inside the docs folder.
+Specification is in {PDF}[link:../doc/SIF%20ImplementationSpecification.pdf] format 
+inside the doc folder.
 
 
 More information here: http://sifinfo.org.
@@ -65,6 +65,3 @@ Author:: Clint Hill
 Email:: mailto://clint.hill@h3osoftware.com
 Home Page:: http://h3osoftware.com/siffer
 SVN:: http://svn.h3osoftware.com/siffer
-
-
-
