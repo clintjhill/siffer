@@ -1,0 +1,68 @@
+= Project: Siffer  -  h3o(software) SIF Implementation
+
+== Welcome to Siffer
+
+This is the h3o(software) implementation of the SIF (School Interoperability 
+Framework) in Ruby. The project is Ruby based and includes all of the SIF 
+infrastructure (Data Model, Agents, Zone Integration Servers and even database 
+stores). 
+
+== Goal
+
+The overriding goal of this project is to provide anyone in the education 
+industry a quick, easy and small SIF implementation tool. Sane Defaults in front
+of easy Configurations.
+
+=== Setup and Deployment
+
+Siffer is easy to install and setup. Zone Integration Servers and Agents can be 
+created at the command line. Zone Integration Servers are managed by web based 
+interfaces and Agents will be centrally managed by a web based interface. 
+Administrators will be able to manage all components of their deployment from 
+a browser.
+
+== Philosophy 
+
+Remove the complexity from the implementation. Make the execution and 
+deployment of SIF easy.
+
+== Implementation Information (sifinfo.org)
+
+This implementation is based on version 2.2 of the SIF Specification. The 
+Specification is in {PDF}[link:../SIF%20ImplementationSpecification.pdf] format 
+inside the doc folder.
+
+
+More information here: http://sifinfo.org.
+
+== Description of Contents
+
+== Useage
+
+== License
+
+Siffer is released under the MIT License
+
+== Installation
+
+Siffer can be installed from the siffer gem:
+
+% [sudo] gem install siffer
+
+== Support
+
+Please contact the author (mailto://clint.hill@h3osoftware.com) for support 
+issues. If you want to contribute do the same. 
+
+=== Contributors
+
+This project is developed by spec. Build spec tests for all of your features. 
+Document everything.
+
+== Contact
+
+Author:: Clint Hill
+Email:: mailto://clint.hill@h3osoftware.com
+Home Page:: http://h3osoftware.com/siffer
+GitHub:: git://github.com/clinth3o/siffer.git
+RubyForge:: http://rubyforge.org/projects/siffer/
