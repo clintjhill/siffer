@@ -41,7 +41,7 @@ namespace :spec do
       t.spec_files = Dir['spec/**/*_spec.rb'].sort
       t.libs = ['lib']
       t.rcov = true
-      t.rcov_opts = ["--exclude 'bin,docs,pkg,spec,#{Gem::path.join(',')}'"] 
+      t.rcov_opts = ["--exclude 'bin,doc,pkg,spec,#{Gem::path.join(',')}'"] 
   end
 end
 
@@ -55,7 +55,7 @@ namespace :doc do
     rdoc.rdoc_files.add(files)
     rdoc.main = "README"
     rdoc.title = "Siffer == h3o(software) SIF"
-    rdoc.rdoc_dir = "docs/rdoc"
+    rdoc.rdoc_dir = "doc/rdoc"
     rdoc.options << "--line-numbers" << "--inline-source"
   end
 end
