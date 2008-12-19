@@ -51,9 +51,9 @@ end
 task :doc => ["doc:rdoc"]
 namespace :doc do
   Rake::RDocTask.new do |rdoc|
-    files = ["README","LICENSE","lib/**/*.rb"]
+    files = ["README.rdoc","LICENSE","lib/**/*.rb"]
     rdoc.rdoc_files.add(files)
-    rdoc.main = "README"
+    rdoc.main = "README.rdoc"
     rdoc.title = "Siffer == h3o(software) SIF"
     rdoc.rdoc_dir = "doc/rdoc"
     rdoc.options << "--line-numbers" << "--inline-source"
