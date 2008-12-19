@@ -61,8 +61,7 @@ Document everything.
 
 == Contact
 
-Author:: Clint Hill
-Email:: mailto://clint.hill@h3osoftware.com
-Home Page:: http://h3osoftware.com/siffer
-GitHub:: git://github.com/clinth3o/siffer.git
-RubyForge:: http://rubyforge.org/projects/siffer/
+- Author:: {Clint Hill} mailto://clint.hill@h3osoftware.com
+- Home Page:: http://h3osoftware.com/siffer
+- GitHub:: git://github.com/clinth3o/siffer.git
+- RubyForge:: http://rubyforge.org/projects/siffer/
