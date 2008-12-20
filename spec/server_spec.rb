@@ -7,4 +7,9 @@ describe Siffer::Server do
     server.port.should == 8300
     server.name.should == "Default Server"
   end
+  
+  it "should respond to uri" do
+    server = Siffer::Server.new
+    server.uri.should == "http://localhost:8300"
+  end
 end

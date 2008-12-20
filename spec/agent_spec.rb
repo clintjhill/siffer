@@ -7,4 +7,9 @@ describe Siffer::Agent do
     agent.port.should == 8300
     agent.name.should == "Default Agent"
   end
+  
+  it "should respond to uri" do
+    agent = Siffer::Agent.new
+    agent.uri.should == "http://localhost:8300"
+  end
 end

@@ -2,6 +2,8 @@ require 'rubygems'
 require 'uuid'
 require 'rack'
 require 'builder'
+require 'net/http'
+require 'net/https'
 
 $: << File.expand_path(File.dirname(__FILE__))
 

@@ -10,6 +10,10 @@ module Siffer
         raise "Only POST method allowed"
       end
     end
+    
+    def uri
+       URI.parse("http://#{host}:#{@port}").to_s
+    end
 
     ACCEPTABLE_PATHS = {
       :root => "/",
