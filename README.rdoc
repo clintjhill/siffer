@@ -10,16 +10,14 @@ stores).
 == Goal
 
 The overriding goal of this project is to provide anyone in the education 
-industry a quick, easy and small SIF implementation tool. Sane Defaults in front
-of easy Configurations.
+industry a quick, easy and simple SIF implementation tool. The entire system 
+can be managed by a browser.
 
 === Setup and Deployment
 
 Siffer is easy to install and setup. Zone Integration Servers and Agents can be 
-created at the command line. Zone Integration Servers are managed by web based 
-interfaces and Agents will be centrally managed by a web based interface. 
-Administrators will be able to manage all components of their deployment from 
-a browser.
+created from the browser. Administrators will be able to manage all components 
+of their deployment from a command line or browser.
 
 == Philosophy 
 
