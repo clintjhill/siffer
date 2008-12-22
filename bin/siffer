@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'optparse'
+require 'yaml'
+require 'lib/siffer' # THIS NEEDS TO BE THE GEM
+
+options = {:environment => "development"}
+
+opts = OptionParser.new("", 24, ' ') { |opts| 
+  opts.banner = "Usage: siffer [start|run|stop|kill] [component] [options]"
+  
+  opts.separator ""
+  opts.separator "Siffer options:"
+  
+  opts.on("-e", 
+          "--env ENVIRONMENT", 
+          "use ENVIRONMENT for defaults (default: development)") { |e|
+    options[:environment] = env
+  }
+   
+  opts.on("-d", 
+          "--daemonize", 
+          "run daemonized in the background (default: true)") { |d|
+    options[:daemonize] = d ? true : false
+  }
+  
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+
+  opts.on_tail("-v", "--version", "Show version") do
+   puts "Siffer #{Siffer.version} (SIF Version #{Siffer.sif_version})"
+   exit
+  end
+
+  opts.parse! ARGV
+}
+
+unless ARGV[0]
+  abort opts.to_s
+end
+
+unless options[:component] = ARGV[1]
+  abort opts.to_s
+end
+
+options[:config] = YAML.load_file(File.expand_path(options[:component]))
+options[:pid] = "#{options[:component]}.pid"
+
+if ARGV[0] == "start" or ARGV[0] == "run"
+  Siffer::Container.run(options)
+else
+  pid = open("#{options[:pid]}").read.to_i
+  Process.kill(15,pid)
+end
+
+
+

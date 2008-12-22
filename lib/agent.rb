@@ -7,9 +7,9 @@ module Siffer
     attr_reader :name, :host, :port
     
     def initialize(options = {})
-      @name = options[:name] || "Default Agent"
-      @host = options[:host] || "localhost"
-      @port = options[:port] || 8300
+      @name = options['name'] || "Default Agent"
+      @host = options['host'] || "localhost"
+      @port = options['port'] || 8300
     end
     
     def call(env)

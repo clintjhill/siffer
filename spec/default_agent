@@ -1,0 +1,4 @@
+agent:
+  name: 'Clints Agent'
+  host: 'localhost'
+  port: 8282

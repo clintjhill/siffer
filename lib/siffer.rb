@@ -33,6 +33,6 @@ Siffer.autoload :Messages, "messages"
 Siffer.autoload :Protocol, "protocol"
 Siffer.autoload :Messaging, "messaging"
 
-%w(server agent response request).each do |component|
+%w(server agent response request container).each do |component|
   require component
 end
