@@ -8,6 +8,7 @@ module Siffer
       begin
         check_path_against_protocol
       rescue UnknownPath
+        # Do I want this to be a better 404 html response?
         @response = Response.new(HTTP_STATUS_CODES[404],
                       404,
                       {"Content-Type" => Siffer::Messaging::MIME_TYPES["htm"]})
