@@ -8,9 +8,9 @@ module Siffer
       raise "Component Configuration missing" if options[:config].nil?
       config = options[:config]
       @component = config.include?("agent") ? "agent" : "server"
-      @name = config[@component][:name]
-      @host = config[@component][:host]
-      @port = config[@component][:port]
+      @name = config[@component]["name"]
+      @host = config[@component]["host"]
+      @port = config[@component]["port"]
     end
     
     def server

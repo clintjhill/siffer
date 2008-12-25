@@ -1,10 +1,22 @@
 module Siffer
   module Messaging
     
+    class BadContentType < Exception ; end
+    
+    def request_failed_messaging?
+      begin
+        check_content_type_against_messaging
+      rescue BadContentType
+         @response = Response.new(Siffer::Protocol::HTTP_STATUS_CODES[406],
+                        406,
+                        {"Content-Type" => Siffer::Messaging::MIME_TYPES["htm"]})
+      end
+    end
+    
     def check_content_type_against_messaging
       unless @request.content_type == MIME_TYPES["appxml"] or 
           @request.content_type == MIME_TYPES["xml"]
-        raise "Content Type is not accepted"
+        raise BadContentType
       end
     end
     
