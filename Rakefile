@@ -8,9 +8,8 @@ include FileUtils
 require File.join(File.dirname(__FILE__),"lib","siffer")
 include Siffer
 
-NAME = "siffer"
 spec = Gem::Specification.new do |s|
-  s.name = NAME
+  s.name = "siffer"
   s.version = Siffer.version
   s.platform = Gem::Platform::RUBY
   s.author = "Clint Hill"
@@ -19,11 +18,10 @@ spec = Gem::Specification.new do |s|
   s.summary = "Siffer - School Interoperability Framework by h3o(software)"
   s.rubyforge_project = "siffer"
   s.require_path = "lib"
-  s.files        = %w( LICENSE README Rakefile ) + Dir["{spec,lib,doc}/**/*"]
+  s.files        = %w( LICENSE README.rdoc Rakefile ) + Dir["{spec,lib,doc}/**/*"]
   s.bindir = "bin"
   s.executables = %w( siffer )
   s.add_dependency "uuid"
-  s.required_ruby_version = ">= 1.8.7"
 end
 
 Rake::GemPackageTask.new(spec) do |package|

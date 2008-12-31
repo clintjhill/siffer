@@ -9,6 +9,6 @@ describe Ack do
   end
   
   it "should have an original message" do
-    @ack.original_msg.should be @msg
+    @ack.original_msg.should be(@msg)
   end
 end

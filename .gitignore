@@ -1,4 +1,9 @@
 doc/rdoc
 coverage
+pkg
+spec/*.log
+spec/*.pid
 .DS_Store
+*.pid
+*.log
 

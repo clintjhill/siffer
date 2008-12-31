@@ -20,4 +20,9 @@ describe Siffer::Response do
     response.body.each { |line| line.should == "Hello World" }
     server.shutdown
   end
+  
+  it "should return 500 for bad url" do
+    response = Siffer::Response.from("http://localhost:9999","Hello World")
+    response.should be_server_error
+  end
 end

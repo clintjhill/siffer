@@ -3,8 +3,12 @@
 require 'rubygems'
 require 'optparse'
 require 'yaml'
-require 'lib/siffer' # THIS NEEDS TO BE THE GEM
-
+# For test purposes rescue the require so we can get the local lib
+begin
+  require 'siffer'
+rescue LoadError
+  require 'lib/siffer'
+end
 options = {:environment => "development"}
 
 opts = OptionParser.new("", 24, ' ') { |opts| 
@@ -15,8 +19,8 @@ opts = OptionParser.new("", 24, ' ') { |opts|
   
   opts.on("-e", 
           "--env ENVIRONMENT", 
-          "use ENVIRONMENT for defaults (default: development)") { |e|
-    options[:environment] = env
+          "development, deployment, test, none (default: development)") { |e|
+    options[:environment] = e
   }
    
   opts.on("-d", 
@@ -38,7 +42,7 @@ opts = OptionParser.new("", 24, ' ') { |opts|
   opts.parse! ARGV
 }
 
-unless ARGV[0]
+unless command = ARGV[0]
   abort opts.to_s
 end
 
@@ -47,13 +51,20 @@ unless options[:component] = ARGV[1]
 end
 
 options[:config] = YAML.load_file(File.expand_path(options[:component]))
-options[:pid] = "#{options[:component]}.pid"
 
-if ARGV[0] == "start" or ARGV[0] == "run"
-  Siffer::Container.run(options)
+component = options[:component].split('/')[-1]
+cwd = File.expand_path(File.dirname(options[:component]))
+options[:log] = File.join(cwd,"#{component}.log")
+options[:pid] = File.join(cwd,"#{component}.pid")
+container = Siffer::Container.new(options)
+if command == "start" or command == "run"
+  if options[:environment] == "test"
+    puts options.inspect # For testing purposes let's just output the options
+  else
+    container.run
+  end
 else
-  pid = open("#{options[:pid]}").read.to_i
-  Process.kill(15,pid)
+  container.stop
 end
 
 

@@ -37,12 +37,21 @@ module Siffer
     end
     
     # Paths that comply with the messaging protocol determined
-    # by the SIF Specification.
+    # by the SIF Specification. These are Siffer specific and not
+    # spelled out in SIF Specification (rather implied).
     ACCEPTABLE_PATHS = {
       :root => "/",
       :ping => "/ping",
-      :status => "/status"
+      :status => "/status",
+      :register => "/register"
     }
+    
+    ACCEPTABLE_PATHS.each do |name,path|
+      define_method("#{name.to_s}?") do
+        req_body = Siffer::Messages::RequestBody.parse(@request.body)
+        req_body.type.downcase == name.to_s
+      end
+    end
     
     # Every standard HTTP code mapped to the appropriate message.
     # Stolen from Mongrel.

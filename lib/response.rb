@@ -9,13 +9,17 @@ module Siffer
      
      def self.from(url,data)
        uri = URI.parse(url)
-       response = Net::HTTP.start(uri.host,uri.port) { |http|
-         post = Net::HTTP::Post.new(uri.path, {})
-         post.body = data
-         post.content_type = Siffer::Messaging::MIME_TYPES["appxml"]
-         http.request(post)
-       }
-       Response.new(response.body,response.code.to_i,response.header.to_hash)
+       begin
+         response = Net::HTTP.start(uri.host,uri.port) { |http|
+           post = Net::HTTP::Post.new(uri.path, {})
+           post.body = (data.respond_to?("to_str")) ? data.to_str : data
+           post.content_type = Siffer::Messaging::MIME_TYPES["appxml"]
+           http.request(post)
+         }
+         Response.new(response.body,response.code.to_i,response.header.to_hash)
+       rescue Errno::ECONNREFUSED => e
+         Response.new(e.message, 500, {})
+       end
      end
   end
   

@@ -5,7 +5,7 @@ require File.join(File.dirname(__FILE__),"spec_helper")
   # Stage the component a little bit:
   #    Agents require Servers
   #    Both require central-admin 
-  component = component.new("servers" => '')
+  component = component.new("admin" => 'none', "servers" => '')
   
   describe component, "Messaging - responses" do
     it "should all be SIF_Ack body" do
@@ -15,7 +15,7 @@ require File.join(File.dirname(__FILE__),"spec_helper")
       end
     end  
   end
-    
+  
   describe component, "Messaging - content-type" do
     it "should always respond with application/xml" do
       Siffer::Protocol::ACCEPTABLE_PATHS.each do |name,path|

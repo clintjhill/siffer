@@ -14,6 +14,9 @@ module Siffer
     SIF_VERSION = [2,2,0] unless defined?(Siffer::SIF_VERSION)
     SIF_XMLNS = "http://www.sifinfo.org/infrastructure/2.x" unless defined?(Siffer::SIF_XMLNS)
   
+    # The vendor of this SIF implementation (self describing for Agents)
+    def self.vendor() VENDOR end
+      
     # The version of the h3o(software) SIF implementation
     def self.version() VERSION.join(".") end
   
@@ -33,6 +36,6 @@ Siffer.autoload :Messages, "messages"
 Siffer.autoload :Protocol, "protocol"
 Siffer.autoload :Messaging, "messaging"
 
-%w(server agent response request container).each do |component|
+%w(server agent response request container request_logger).each do |component|
   require component
 end

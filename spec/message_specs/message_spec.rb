@@ -9,11 +9,11 @@ describe Message do
   end
   
   it "should have SIF version" do
-    @message.version.should == "2.2.0"
+    @message.version.should == Siffer.sif_version
   end
   
   it "should have SIF xml namespace" do
-    @message.xmlns.should == "http://www.sifinfo.org/infrastructure/2.x"
+    @message.xmlns.should == Siffer.sif_xmlns
   end
   
   it "should have a header" do
