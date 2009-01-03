@@ -34,17 +34,37 @@ describe Siffer::Messages::Register, "defaults" do
     @reg.vendor.should == Siffer.vendor
   end
   
-  it "should have a body containing agent name" do
-    @reg.body.should match(/SIF_MaxBufferSize>1024<\/SIF_MaxBufferSize/)
+end
+
+describe Siffer::Messages::Register, "overrides" do
+  it "should allow sif version override" do
+    reg = Register.new("source","agent",:version => '9.9')
+    reg.version.should == '9.9'
   end
   
-  it "should have a body containing max buffer size" do
-    @reg.body.should match(/SIF_Name>agent<\/SIF_Name>/)
+  it "should allow max_buffer override" do
+    reg = Register.new("source", "agent", :max_buffer => 2048)
+    reg.max_buffer.should == 2048
   end
   
-  it "should respond to 'to_str'" do
-    @reg.should respond_to("to_str")
-    @reg.to_str.should match(/SIF_Message/)
+  it "should allow mode override" do
+    reg = Register.new("source", "agent", :mode => 'Push')
+    reg.mode.should == "Push"
+  end
+end
+
+describe Siffer::Messages::Register, "content" do
+  
+  before(:each) do
+    @reg = Register.new("source", "agent")
+  end
+  
+  it "should have max buffer size" do
+    @reg.content.should match(/SIF_MaxBufferSize>1024<\/SIF_MaxBufferSize/)
+  end
+  
+  it "should have agent name" do
+    @reg.content.should match(/SIF_Name>agent<\/SIF_Name>/)
   end
   
 end

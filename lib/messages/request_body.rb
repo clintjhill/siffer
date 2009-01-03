@@ -1,5 +1,3 @@
-require 'rexml/document'
-
 module Siffer
   
   module Messages
@@ -14,7 +12,7 @@ module Siffer
       def type
         begin
           msg_type = @doc.root.elements[1].name
-          unless msg_type != "SIF_SystemControl"
+          if msg_type == "SIF_SystemControl"
             xpath = "//SIF_SystemControl"
             msg_type = REXML::XPath.first(@doc,xpath).elements[1].name
           end
@@ -24,12 +22,12 @@ module Siffer
         end
       end
       
-      def source
+      def source_id
         begin
           xpath = "//SIF_Header/SIF_SourceId"
           REXML::XPath.first(@doc,xpath).text
         rescue
-          raise "Failed to parse #{@xml} for SIF Source Id"
+          ""
         end
       end
       
@@ -38,7 +36,7 @@ module Siffer
           xpath = "//SIF_Header/SIF_MsgId"
           REXML::XPath.first(@doc,xpath).text
         rescue
-          raise "Failed to parse #{@xml} for SIF Message Id"
+          ""
         end
       end
       

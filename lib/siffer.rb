@@ -4,6 +4,7 @@ require 'rack'
 require 'builder'
 require 'net/http'
 require 'net/https'
+require 'rexml/document'
 
 $: << File.expand_path(File.dirname(__FILE__))
 

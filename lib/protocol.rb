@@ -8,11 +8,12 @@ module Siffer
       begin
         check_path_against_protocol
       rescue UnknownPath
-        # Do I want this to be a better 404 html response?
+        # Make a better Not Found response
         @response = Response.new(HTTP_STATUS_CODES[404],
                       404,
                       {"Content-Type" => Siffer::Messaging::MIME_TYPES["htm"]})
       rescue NonPostRequest
+        # Make a better Method Not Allowed response
         @response = Response.new(HTTP_STATUS_CODES[405],
                       405,
                       {"Content-Type" => Siffer::Messaging::MIME_TYPES["htm"]})
@@ -38,7 +39,10 @@ module Siffer
     
     # Paths that comply with the messaging protocol determined
     # by the SIF Specification. These are Siffer specific and not
-    # spelled out in SIF Specification (rather implied).
+    # spelled out in SIF Specification (rather implied). Each path
+    # will generate it's own predicate method (i.e. #ping?) that can
+    # be used to determine the requests path based on the content of the
+    # message or the path-info of the request.
     ACCEPTABLE_PATHS = {
       :root => "/",
       :ping => "/ping",
@@ -49,7 +53,7 @@ module Siffer
     ACCEPTABLE_PATHS.each do |name,path|
       define_method("#{name.to_s}?") do
         req_body = Siffer::Messages::RequestBody.parse(@request.body)
-        req_body.type.downcase == name.to_s
+        @request.path_info == path || req_body.type.downcase == name.to_s
       end
     end
     

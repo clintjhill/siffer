@@ -1,29 +1,28 @@
 module Siffer
   module Messages
+    
     class Ack < Message
       
       attr_reader :original_msg
       
-      def initialize(source, original)
-        super(source)
+      def initialize(source, original, options = {})
+        super(source, options)
         @original_msg = original
+        @error = options[:error] || nil
       end
       
-      def body
-        content do |ack|
+      def content
+        body do |ack|
           ack.SIF_Ack() { |xml|
             put_header_into xml
-            xml.SIF_OriginalSourceId(@original_msg.header.source_id)
-            xml.SIF_OriginalMsgId(@original_msg.header.msg_id)
-            yield xml if block_given?
+            xml.SIF_OriginalSourceId(@original_msg.source_id)
+            xml.SIF_OriginalMsgId(@original_msg.msg_id)
+            xml << @error.read unless @error.nil?
           }
         end
       end
       
-      def to_str
-        body
-      end
-      
     end
+    
   end
 end

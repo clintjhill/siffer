@@ -38,5 +38,20 @@ describe Message do
     @message.should respond_to("to_str")
     @message.to_str.should match(/SIF_Message/)
   end
+  
+  it "should respond to 'read'" do
+    @message.should respond_to("read")
+    @message.read.should match(/SIF_Message/)
+  end
+  
+  it "should allow xmlns override" do
+    @message = Message.new("source", :xmlns => "bogus")
+    @message.xmlns.should == "bogus"
+  end
+  
+  it "should allow version override" do
+    @message = Message.new("source", :version => '9.9')
+    @message.version.should == "9.9"
+  end
       
 end

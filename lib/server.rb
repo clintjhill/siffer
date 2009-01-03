@@ -25,13 +25,16 @@ module Siffer
 
     end
     
+    # Will validate the request against the Siffer::Protocol and 
+    # Siffer::Messaging constraints. Process responses based on
+    # requests path or content determined by the predicate methods
+    # implemented in Siffer::Protocol::ACCEPTABLE_PATHS
     def call(env)
       @request = Request.new(env)
       unless request_failed_protocol? or request_failed_messaging?
-        build_message_from_request  
-        @response = Response.new(Siffer::Messages::Ack.new(self.name,@message))      
+        # Perform response based on SIF_Message type       
       end
-      @response.finish
+      @response.finish unless no_response_available
     end
           
   end

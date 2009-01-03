@@ -55,15 +55,15 @@ PING
     @msg.type.should == "Ping"
   end
   
-  it "should provide reasonable error message on failed type parse" do
+  it "should raise error when type not parsible" do
     lambda {
-      @msg = Siffer::Messages::RequestBody.parse("Hello World") 
-      bad = @msg.type
-    }.should raise_error("Failed to parse Hello World for SIF Type")
+      Siffer::Messages::RequestBody.parse("<SIF_Message></SIF_Message>").type
+    }.should 
+      raise_error("Failed to parse <SIF_Message></SIF_Message> for SIF Type")
   end
   
   it "should parse source id" do
-    @msg.source.should == "Clints Agent"
+    @msg.source_id.should == "Clints Agent"
   end
   
   it "should parse msg id" do

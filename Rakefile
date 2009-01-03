@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/clean'                       
 require 'rake/gempackagetask'
-require "rake/rdoctask"
+require 'rake/rdoctask'
 require 'spec/rake/spectask'
 require 'fileutils'
 include FileUtils
@@ -57,3 +57,5 @@ namespace :doc do
     rdoc.options << "--line-numbers" << "--inline-source"
   end
 end
+
+

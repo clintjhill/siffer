@@ -6,20 +6,28 @@ module Siffer
     
       attr_reader :xmlns, :version, :header
     
-      def initialize(source)
+      def initialize(source, options = {})
         raise ArgumentError, "Source not provided." if source.nil?
-        @xmlns = Siffer.sif_xmlns
-        @version = Siffer.sif_version
+        @xmlns = options[:xmlns] || Siffer.sif_xmlns
+        @version = options[:version] || Siffer.sif_version
         @header = Header.new(source)
         @body = Builder::XmlMarkup.new
       end
       
       def content
-        @body.SIF_Message(:version => Siffer.sif_version, 
-                          :xmlns => Siffer.sif_xmlns) { |xml|
+        @body.SIF_Message(:version => @version, :xmlns => @xmlns) { |xml|
           yield xml if block_given?
         }
       end
+      
+      # Alias method to the Header SourceId
+      def source_id() header.source_id; end
+      # Alias method to the Header MsgId
+      def msg_id() header.msg_id; end
+      
+      # used to remove the stack too deep issue when overridden
+      # there has to be a better way .... TODO: Fix the alias crap
+      alias :body :content 
       
       def put_header_into(xml)
         xml.SIF_Header { |head|
@@ -29,9 +37,14 @@ module Siffer
         }
       end
       
-      def to_str
-        content
+      # Returns the content of the message
+      def read
+        # this construct prevents the xml from being built
+        # over and over again for every read made to this
+        # message.
+        @xml ||= content
       end
+      alias :to_str :read
       
       # Each Message requires a Header to identify the source.
       # You shouldn't need to initialize this by itself, it is

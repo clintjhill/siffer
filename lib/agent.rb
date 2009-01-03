@@ -20,10 +20,9 @@ module Siffer
     def call(env)
       @request = Request.new(env)
       unless request_failed_protocol? or request_failed_messaging?
-        build_message_from_request
-        @response = Response.new(Siffer::Messages::Ack.new(name,@message))
+        # Perform response based on SIF_Message type
       end
-      @response.finish
+      @response.finish unless no_response_available
     end
 
     def wake_up

@@ -5,18 +5,18 @@ module Siffer
       
       attr_reader :name, :version, :vendor, :max_buffer, :mode
       
-      def initialize(source, name)
-        super(source)
+      def initialize(source, name, options = {})
+        super(source, options)
         raise "Agent name required" unless name
         @name = name
-        @version = Siffer.sif_version
-        @max_buffer = 1024
-        @mode = 'Pull'
-        @vendor = Siffer.vendor
+        @version = options[:version] || Siffer.sif_version
+        @max_buffer = options[:max_buffer] || 1024
+        @mode = options[:mode] || 'Pull'
+        @vendor = options[:vendor] || Siffer.vendor
       end
       
-      def body
-        content do |reg|
+      def content
+        body do |reg|
           reg.SIF_Register() { |xml|
             put_header_into xml
             reg.SIF_Name(@name)
@@ -25,10 +25,6 @@ module Siffer
             reg.SIF_Mode(@mode)
           }
         end
-      end
-      
-      def to_str
-        body
       end
       
     end
