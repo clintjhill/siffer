@@ -1,13 +1,14 @@
 module Siffer
   module Messages
     
+    # Message used by Agents to register themselves with the ZIS.
     class Register < Message
       
       attr_reader :name, :version, :vendor, :max_buffer, :mode
       
       def initialize(source, name, options = {})
         super(source, options)
-        raise "Agent name required" unless name
+        raise ArgumentError, "Agent name required" unless name
         @name = name
         @version = options[:version] || Siffer.sif_version
         @max_buffer = options[:max_buffer] || 1024
@@ -25,6 +26,32 @@ module Siffer
             reg.SIF_Mode(@mode)
           }
         end
+      end
+      
+      # Parses the body passed as a Register message and returns a
+      # RequestBody that provides access to Register properties.
+      def self.parse(body)
+        RegisterBody.parse(body)
+      end
+      
+      class RegisterBody < RequestBody #:nodoc:
+        
+        def name
+          (@doc/:SIF_Name).text
+        end
+      
+        def version
+          (@doc/:SIF_Version).text
+        end
+      
+        def max_buffer
+          (@doc/:SIF_MaxBufferSize).text.to_i
+        end
+      
+        def mode
+          (@doc/:SIF_Mode).text
+        end
+        
       end
       
     end

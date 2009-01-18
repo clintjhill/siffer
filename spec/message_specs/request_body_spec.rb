@@ -3,21 +3,7 @@ require File.join(File.dirname(__FILE__),"..","spec_helper")
 describe Siffer::Messages::RequestBody do
   
   before(:each) do
-    @xml = <<'EOF'
-<SIF_Message version="2.2.0" xmlns="http://www.sifinfo.org/infrastructure/2.x">
-	<SIF_Register>
-		<SIF_Header>
-		<SIF_MsgId>D0D297E0B732012BF1130016CB918E73</SIF_MsgId>
-		<SIF_Timestamp>Sun Dec 28 10:28:07 -0700 2008</SIF_Timestamp>
-		<SIF_SourceId>Clints Agent</SIF_SourceId>
-		</SIF_Header>
-	<SIF_Name>Clints Agent</SIF_Name>
-	<SIF_Version>2.2.0</SIF_Version>
-	<SIF_MaxBufferSize>1024</SIF_MaxBufferSize>
-	<SIF_Mode>Pull</SIF_Mode>
-	</SIF_Register>
-</SIF_Message>
-EOF
+    @xml = Siffer::Messages::Register.new("Clints Agent", "test server name")
     @msg = Siffer::Messages::RequestBody.parse(@xml)
   end
   
@@ -44,13 +30,7 @@ EOF
   end
   
   it "should parse message type within SystemControl" do
-    ping = <<"PING"
-<SIF_Message>
-  <SIF_SystemControl>
-    <SIF_Ping></SIF_Ping>
-  </SIF_SystemControl>
-</SIF_Message>
-PING
+    ping = "<SIF_Message><SIF_SystemControl><SIF_Ping /></SIF_SystemControl></SIF_Message>"
     @msg = Siffer::Messages::RequestBody.parse(ping)
     @msg.type.should == "Ping"
   end
@@ -63,11 +43,11 @@ PING
   end
   
   it "should parse source id" do
-    @msg.source_id.should == "Clints Agent"
+    @msg.source_id.should == @xml.source_id
   end
   
   it "should parse msg id" do
-    @msg.msg_id.should == "D0D297E0B732012BF1130016CB918E73"
+    @msg.msg_id.should == @xml.msg_id
   end
   
   it "should drop SIF_ from element names" do

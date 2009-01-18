@@ -18,4 +18,11 @@ describe Ack do
     ack.read.should match(/SIF_Category>3<\/SIF_Category>/)
     ack.read.should match(/SIF_Code>2<\/SIF_Code>/)
   end
+  
+  it "should allow a status to be added through options" do
+    ack = Ack.new("ack-msg",Message.new("source"), :status => Status.success)
+    ack.read.should match(/SIF_Status/)
+    ack.read.should match(/SIF_Code>0</)
+    ack.read.should match(/SIF_Description>Success</)
+  end
 end

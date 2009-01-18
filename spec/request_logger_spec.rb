@@ -1,11 +1,8 @@
 require File.join(File.dirname(__FILE__),"spec_helper")
 
 describe Siffer::RequestLogger do
-  msg = <<"MSG"
-<SIF_Message>
-  <SIF_SystemControl><SIF_Ping /></SIF_SystemControl>
-</SIF_Message>
-MSG
+  msg = "<SIF_Message><SIF_SystemControl><SIF_Ping /></SIF_SystemControl></SIF_Message>"
+
   it "should log requests" do
     log = []
     app = Rack::Builder.new do

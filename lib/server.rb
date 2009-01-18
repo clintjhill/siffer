@@ -6,35 +6,33 @@ module Siffer
   # from other Agents. 
   class Server
     include Siffer::Protocol
-    include Siffer::Messaging
+    include Siffer::Registration
     
-    attr_reader :name, :host, :port, :agents
+    attr_reader :name, :host, :port, :min_buffer, :agents
     
     ## options Parameter
     # name = The name of the ZIS
     # host = The host this instance is started on
     # port = The port to connect to this ZIS
     # admin = The administration site managing this ZIS
+    # min_buffer = The minimum buffer size this ZIS will facilitate
     def initialize(options = {})
-      raise "Administration URL required" unless options.include? "admin"
-
+      raise ArgumentError, "Administration URL required" unless options.include? "admin"
       @name = options["name"] || "Default Server"
       @host = options["host"] || "localhost"
       @port = options["port"] || 8300
+      @min_buffer = options["min_buffer"] || 1024
       @agents = {}
-
     end
     
-    # Will validate the request against the Siffer::Protocol and 
-    # Siffer::Messaging constraints. Process responses based on
-    # requests path or content determined by the predicate methods
-    # implemented in Siffer::Protocol::ACCEPTABLE_PATHS
+    # Process the request with all the SIF protocols
     def call(env)
-      @request = Request.new(env)
-      unless request_failed_protocol? or request_failed_messaging?
-        # Perform response based on SIF_Message type       
+      with_each_request(env) do
+         process_registration
+          # process_provision
+          # process_subscription
+          # process_event
       end
-      @response.finish unless no_response_available
     end
           
   end

@@ -10,6 +10,9 @@ require File.join(File.dirname(__FILE__),"spec_helper")
   #    Both require central-admin 
   component = component.new("admin" => 'none', "servers" => '')
   msg = Siffer::Messages::Message.new("source")
+  msg.content do |xml|
+    xml.SIF_BogusType
+  end
   
   describe component, "Messaging - response" do
     it "should always return Ack for proper SIF_Messages" do
@@ -37,12 +40,24 @@ require File.join(File.dirname(__FILE__),"spec_helper")
   describe component, "Messaging - validation" do
     
     it "should return Xml Error code for bad message (xml)" do
-      msg = "<Junk>>>>"
+      %w[<Junk>>>> <Junk> </Junk> Junk !@ex].each do |msg|
+        for_every_path(:on => component, :input => msg) do |res|
+          res.body.should match(/SIF_Error/)
+          res.body.should match(/SIF_Category>1<\/SIF_Category/)
+          res.body.should match(/SIF_Code>2<\/SIF_Code>/)
+          res.body.should match(/Message is not well-formed/)
+          # spec says Oringals should be included and empty
+          res.body.should match(/SIF_OriginalSourceId\s*\/>/)
+          res.body.should match(/SIF_OriginalMsgId\s*\/>/)
+        end
+      end
+    end
+    
+    it "should validaate message is SIF_Message" do
+      msg = "<someotherkind><of>XML</of></someotherkind>"
       for_every_path(:on => component, :input => msg) do |res|
-        res.body.should match(/SIF_Error/)
-        res.body.should match(/SIF_Category>1<\/SIF_Category/)
-        res.body.should match(/SIF_Code>2<\/SIF_Code>/)
-        res.body.should match(/Message is not well-formed/)
+        res.body.should match(/SIF_Category>12/)
+        res.body.should match(/SIF_Code>2/)
       end
     end
     

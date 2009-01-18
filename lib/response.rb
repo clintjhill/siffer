@@ -12,7 +12,7 @@ module Siffer
        begin
          response = Net::HTTP.start(uri.host,uri.port) { |http|
            post = Net::HTTP::Post.new(uri.path, {})
-           post.body = (data.respond_to?("to_str")) ? data.to_str : data
+           post.body = (data.respond_to?("read")) ? data.read : data
            post.content_type = Siffer::Messaging::MIME_TYPES["appxml"]
            http.request(post)
          }

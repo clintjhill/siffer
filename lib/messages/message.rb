@@ -1,11 +1,13 @@
 module Siffer
   module Messages
     
-    # Base class for all Messages in the framework.
+    # Base class for all Messages in the framework. Embeds the XMLNS as
+    # well as the version of SIF implemented.
     class Message
     
       attr_reader :xmlns, :version, :header
-    
+      
+      # source parameter is required (string describing the original sender)
       def initialize(source, options = {})
         raise ArgumentError, "Source not provided." if source.nil?
         @xmlns = options[:xmlns] || Siffer.sif_xmlns
@@ -14,8 +16,10 @@ module Siffer
         @body = Builder::XmlMarkup.new
       end
       
+      # Builds the xml for this message. Accepts a block if nested 
+      # elements are required.
       def content
-        @body.SIF_Message(:version => @version, :xmlns => @xmlns) { |xml|
+        @xml ||= @body.SIF_Message(:version => @version, :xmlns => @xmlns) { |xml|
           yield xml if block_given?
         }
       end

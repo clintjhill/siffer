@@ -10,15 +10,11 @@ describe Siffer::Response do
   end
   
   it "should receive response from url,data" do
-    fake_app = lambda { |env| [200,{},env["rack.input"].read] }
-    server = WEBrick::HTTPServer.new(:Host => '0.0.0.0',:Port => 9202)
-    server.mount "/", Rack::Handler::WEBrick, fake_app
-    Thread.new { server.start }
-    trap(:INT) { server.shutdown }
-    response = Siffer::Response.from("http://localhost:9202/","Hello World")
-    response.should be_successful
-    response.body.each { |line| line.should == "Hello World" }
-    server.shutdown
+    with_fake_server do |url|
+      response = Siffer::Response.from(url,"Hello World")
+      response.should be_successful
+      response.body.each { |line| line.should == "Hello World" }  
+    end
   end
   
   it "should return 500 for bad url" do

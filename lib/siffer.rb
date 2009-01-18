@@ -5,6 +5,7 @@ require 'builder'
 require 'net/http'
 require 'net/https'
 require 'rexml/document'
+require 'hpricot'
 
 $: << File.expand_path(File.dirname(__FILE__))
 
@@ -36,6 +37,7 @@ end
 Siffer.autoload :Messages, "messages"
 Siffer.autoload :Protocol, "protocol"
 Siffer.autoload :Messaging, "messaging"
+Siffer.autoload :Registration, "registration"
 
 %w(server agent response request container request_logger).each do |component|
   require component

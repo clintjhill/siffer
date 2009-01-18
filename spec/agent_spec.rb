@@ -37,16 +37,12 @@ describe Siffer::Agent do
     agent.uri.should == "http://localhost:8300"
   end
   
-  it "should register with server(s)" do
-    fake_server = lambda { |env| [200,{},env["rack.input"].read] }
-    server = WEBrick::HTTPServer.new(:Host => '0.0.0.0',:Port => 9203)
-    server.mount "/", Rack::Handler::WEBrick, fake_server
-    Thread.new { server.start }
-    trap(:INT) { server.shutdown }
-    agent = Siffer::Agent.new("admin" => 'none', "servers" => 'http://localhost:9203/')
-    agent.wake_up
-    agent.should be_registered
-    server.shutdown
+  it "should register with server(s) on wake-up" do
+    with_fake_server(Siffer::Server.new("admin" => "none")) do |url|
+      agent = Siffer::Agent.new("admin" => 'none', "servers" => url)
+      agent.wake_up
+      agent.should be_registered
+    end
   end
   
   it "should be unregistered by default" do

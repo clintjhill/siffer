@@ -1,8 +1,8 @@
 module Siffer
   
   class Agent
+    
     include Siffer::Protocol
-    include Siffer::Messaging
     
     attr_reader :name, :host, :port, :admin, :server
     
@@ -18,21 +18,20 @@ module Siffer
     end
     
     def call(env)
-      @request = Request.new(env)
-      unless request_failed_protocol? or request_failed_messaging?
-        # Perform response based on SIF_Message type
+      with_each_request(env) do
+        
       end
-      @response.finish unless no_response_available
     end
 
     def wake_up
-      register unless registered? 
+      self_register unless registered? 
     end
     
-    def register
-        registration = Siffer::Messages::Register.new(name, name)
-        response = Response.from(server,registration) 
-        @registered = response.ok?
+    def self_register
+      registration = Siffer::Messages::Register.new(name, name)
+      response = Response.from(server,registration) 
+      # OOOOH BAAAAD ====> Check the ACL please ! Make a parser !
+      @registered = response.ok?
     end
     
     def registered?

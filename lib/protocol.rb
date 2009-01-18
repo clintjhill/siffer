@@ -1,30 +1,38 @@
 module Siffer
+  # The Protocol module deals with the transport validation. Provides
+  # constants for HTTP statuses as well as acceptable paths for Siffer
+  # Servers and Agents.
   module Protocol
     
-    class UnknownPath < Exception; end
-    class NonPostRequest < Exception; end
+    include Siffer::Messages
+    include Siffer::Messaging
     
+    class UnknownPath < Exception; end #:nodoc:
+    class NonPostRequest < Exception; end #:nodoc:
+    
+    # Checks the incoming request against the following protocol constraints:
+    # * Unknown PATH
+    # * Non-POST request
     def request_failed_protocol?
       begin
         check_path_against_protocol
       rescue UnknownPath
-        # Make a better Not Found response
+        # TODO: Make a better Not Found response
         @response = Response.new(HTTP_STATUS_CODES[404],
                       404,
                       {"Content-Type" => Siffer::Messaging::MIME_TYPES["htm"]})
       rescue NonPostRequest
-        # Make a better Method Not Allowed response
+        # TODO: Make a better Method Not Allowed response
         @response = Response.new(HTTP_STATUS_CODES[405],
                       405,
                       {"Content-Type" => Siffer::Messaging::MIME_TYPES["htm"]})
       end
     end
     
-    # Validates the request object against 
-    # the Acceptable Paths (Siffer spec) and that
-    # the request is a POST.
+    # Validates the request object against the Acceptable Paths (Siffer spec)
+    # and that the request is a POST.
     def check_path_against_protocol
-      unless ACCEPTABLE_PATHS.values.include? @request.path_info
+      unless ACCEPTABLE_PATHS.has_value? @request.path_info
         raise UnknownPath
       end
       unless @request.post? 
@@ -32,11 +40,56 @@ module Siffer
       end
     end
     
-    # Returns the URI of the component
+    # Returns the URI of the component (Server or Agent)
     def uri
        URI.parse("http://#{host}:#{port}").to_s
     end
     
+    # Provides a context for each request. Creates the @request, @response and
+    # @original objects to use throughout the call. 
+    # Validates against Protocol as well as Messaging using #request_failed 
+    # predicates respectively.
+    #
+    # Yields the block if provided to allow further processing. 
+    #
+    #Finishes by calling #finish on the response object or returns the generic
+    # response message.
+    def with_each_request(env, &block)
+      @request = Request.new(env)
+      unless request_failed_protocol? or request_failed_messaging?
+        using_message_from @request do # possibly a concurrency issue here
+          yield if block_given?
+        end
+      end
+      @response.finish unless no_response_available
+    end
+
+    # Sets the @response to a Siffer::Messages::Ack message with the 
+    # appropriate Error category and code. Optional description is allowed
+    # and placed in the ExtendedDesc node.
+    def error_response(category,code, desc = nil)
+      error = Error.new(category,code,desc)
+      original = RequestBody.parse(@request.message)
+      ack = Ack.new(self.name, original, :error => error)
+      @response = Response.new(ack)
+    end
+
+    # Determines if there is a response instance created. If not
+    # it creates one with an Ack/Error describing not having 
+    # anything to process.
+    def no_response_available
+      if @response.nil?
+        err = <<"ERR"
+You are receiving this message because you failed to 
+provide enough information to respond to. This is likely due
+to the message type missing (i.e. Register,Provide) or possibly
+not enough information to process effectively. Please check the 
+message you are sending and resend after any corrections.
+ERR
+        !error_response(12,1,err)
+      end
+    end
+        
     # Paths that comply with the messaging protocol determined
     # by the SIF Specification. These are Siffer specific and not
     # spelled out in SIF Specification (rather implied). Each path
@@ -52,8 +105,13 @@ module Siffer
     
     ACCEPTABLE_PATHS.each do |name,path|
       define_method("#{name.to_s}?") do
-        req_body = Siffer::Messages::RequestBody.parse(@request.body)
-        @request.path_info == path || req_body.type.downcase == name.to_s
+        req_body = RequestBody.parse(@request.message)
+        req_body.type.downcase == name.to_s
+        # The difference in these lines is the difference between allowing
+        # any message to come through any PATH or forcing PATH and message
+        # to match. What is better?
+        # TODO: Decide on protocol validations !
+        #@request.path_info == path || req_body.type.downcase == name.to_s
       end
     end
     

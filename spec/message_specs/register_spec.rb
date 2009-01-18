@@ -67,4 +67,20 @@ describe Siffer::Messages::Register, "content" do
     @reg.content.should match(/SIF_Name>agent<\/SIF_Name>/)
   end
   
+  it "should parse name from body" do
+    Register.parse(@reg.content).name.should == "agent"
+  end
+  
+  it "should parse SIF version from body" do
+    Register.parse(@reg.content).version.should == Siffer.sif_version
+  end
+  
+  it "should parse max buffer size from body" do
+    Register.parse(@reg.content).max_buffer.should == 1024
+  end
+  
+  it "should parse mode from body" do
+    Register.parse(@reg.content).mode.should == "Pull"
+  end
+  
 end

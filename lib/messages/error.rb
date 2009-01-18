@@ -21,10 +21,8 @@ module Siffer
           error.SIF_ExtendedDesc(@description) unless @description.nil?
         }
       end
-      
-      def to_str
-        read
-      end
+      alias :to_str :read
+  
       
       # Categories of Errors specified by SIF
       CATEGORY = [
