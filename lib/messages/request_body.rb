@@ -47,7 +47,7 @@ module Siffer
       # Xml must respond to read or be a String.
       def self.parse(xml)
         unless xml.respond_to?("read") or xml.is_a?(String)
-          raise "Unable to read Xml" 
+          raise ArgumentError, "Unable to read Xml" 
         end
         xml = xml.read if xml.respond_to?("read")
         self.new(xml) # use self because we are going to inherit this class

@@ -38,10 +38,8 @@ module Siffer
       end
     end
     
-    # Provides a context for the original message by setting @original equal
-    # to the message from the request body.
+    # Provides a context for the original message.
     def using_message_from(request, &block)
-      @original = Siffer::Messages::RequestBody.parse(request.message)
       yield if block_given?
     end
     
@@ -70,7 +68,8 @@ module Siffer
     # * different versions of SIF
     def validate_message
       begin
-        xml = REXML::Document.new(@request.message)
+        body = (@request.body.respond_to? :read) ? @request.body.read : @request.body
+        xml = REXML::Document.new(body)
         # validate Message Root
         raise MalformedXml if xml.root.nil?
         # validate Message Root is a SIF_Message

@@ -69,8 +69,7 @@ module Siffer
     # and placed in the ExtendedDesc node.
     def error_response(category,code, desc = nil)
       error = Error.new(category,code,desc)
-      original = RequestBody.parse(@request.message)
-      ack = Ack.new(self.name, original, :error => error)
+      ack = Ack.new(self.name, @request.original, :error => error)
       @response = Response.new(ack)
     end
 
@@ -105,8 +104,7 @@ ERR
     
     ACCEPTABLE_PATHS.each do |name,path|
       define_method("#{name.to_s}?") do
-        req_body = RequestBody.parse(@request.message)
-        req_body.type.downcase == name.to_s
+        @request.message.type.downcase == name.to_s
         # The difference in these lines is the difference between allowing
         # any message to come through any PATH or forcing PATH and message
         # to match. What is better?

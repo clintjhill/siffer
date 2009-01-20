@@ -23,8 +23,7 @@ module Siffer
     # source is already registered it passes through, otherwise raises
     # AgentNotRegistered exception.
     def check_for_registration 
-      request_body = RequestBody.parse(@request.message)
-      unless register? or registered?(request_body.source_id)
+      unless register? or registered?(@request.message.source_id)
         raise AgentNotRegistered
       end
     end
@@ -38,14 +37,14 @@ module Siffer
     # the agent is added to the list of agents available to the zone.
     def register
       if register?
-        @registration = Register.parse(@request.message)
+        @registration = Register.parse(@request.body)
         validate_source_id
         validate_permission
         validate_version
         validate_max_buffer_size
         # ignore the fact we haven't stored away any registration information !!!!!!
         # ignore the fact we haven't even built a data model for objects and permissions for the acl !!!!!
-        ack = Ack.new(name,@original,:status => Status.success(Acl.new))
+        ack = Ack.new(name, @request.original, :status => Status.success(Acl.new))
         @response = Response.new(ack)
       end
     end

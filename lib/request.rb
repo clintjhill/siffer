@@ -1,18 +1,25 @@
 module Siffer
   
+  # Request represents each message received by the Server or Agent in Siffer.
   class Request < Rack::Request
     
+    # Constructor will assure that #message is always populated with the body
+    # of the request for easy access throughout the call.
     def initialize(env)
       env["CONTENT_TYPE"] ||= Siffer::Messaging::MIME_TYPES["appxml"]
       super(env)
     end
     
-    # Returns the body of the request in string form. This is 
-    # helpful in case you need to re-read the body over and over
-    # again in the event that the body is a StringIO. 
+    # Provides access to the request message in Siffer::Messages::Message 
+    # format.
     def message
-      @msg ||= (body.respond_to?("read")) ? body.read : body
+      if body.is_a?(StringIO) && body.pos == body.length
+        body.rewind
+      end
+      Siffer::Messages::RequestBody.parse(body)
     end
+    alias :original :message
+    
   end
   
 end
