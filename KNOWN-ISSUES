@@ -1,0 +1,5 @@
+= Known issues with Siffer
+
+* Request Logger will try to parse all messages as Siffer messages and 
+  will throw an exception if it isn't 
+* Standard 404, 405, 406 errors are not well formatted. 
