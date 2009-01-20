@@ -22,6 +22,9 @@ spec = Gem::Specification.new do |s|
   s.bindir = "bin"
   s.executables = %w( siffer )
   s.add_dependency "uuid"
+  s.add_dependency "rack"
+  s.add_dependency "hpricot"
+  s.add_dependency "builder"
 end
 
 Rake::GemPackageTask.new(spec) do |package|
