@@ -34,11 +34,11 @@ module Siffer
       
 end
 
-Siffer.autoload :Messages, "messages"
-Siffer.autoload :Protocol, "protocol"
-Siffer.autoload :Messaging, "messaging"
-Siffer.autoload :Registration, "registration"
+Siffer.autoload :Messages, "siffer/messages"
+Siffer.autoload :Protocol, "siffer/protocol"
+Siffer.autoload :Messaging, "siffer/messaging"
+Siffer.autoload :Registration, "siffer/registration"
 
 %w(server agent response request container request_logger).each do |component|
-  require component
+  require "siffer/#{component}"
 end
