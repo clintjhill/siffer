@@ -8,11 +8,8 @@ require File.join(File.dirname(__FILE__),"spec_helper")
   # Stage the component a little bit:
   #    Agents require Servers
   #    Both require central-admin 
-  component = component.new("admin" => 'none', "servers" => '')
-  msg = Siffer::Messages::Message.new("source")
-  msg.content do |xml|
-    xml.SIF_BogusType
-  end
+  component = component.new("admin" => 'none', "server" => '')
+  msg = Siffer::Messages::Message.new("source").content{|xml| xml.SIF_Bogus}
   
   describe component, "Messaging - response" do
     it "should always return Ack for proper SIF_Messages" do
@@ -25,7 +22,7 @@ require File.join(File.dirname(__FILE__),"spec_helper")
   describe component, "Messaging - content-type" do
     it "should always respond with application/xml" do
       for_every_path(:on => component, :input => msg) do |res|
-        res.content_type.should == Siffer::Messaging::MIME_TYPES["appxml"]
+        res.content_type.should == Siffer::Messaging::MIME_TYPES["appxmlencoded"]
       end
     end
     

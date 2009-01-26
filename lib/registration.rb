@@ -23,7 +23,7 @@ module Siffer
     # source is already registered it passes through, otherwise raises
     # AgentNotRegistered exception.
     def check_for_registration 
-      unless register? or registered?(@request.message.source_id)
+      unless @request.register? or registered?(@request.message.source_id)
         raise AgentNotRegistered
       end
     end
@@ -36,7 +36,7 @@ module Siffer
     # If all validations pass the registration is stored by the ZIS and
     # the agent is added to the list of agents available to the zone.
     def register
-      if register?
+      if @request.register?
         @registration = Register.parse(@request.body)
         validate_source_id
         validate_permission

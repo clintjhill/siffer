@@ -14,7 +14,8 @@ module Siffer
                   Siffer::Agent.new(config["agent"]) : 
                   Siffer::Server.new(config["server"])
       @name = config[type]["name"]
-      @host = config[type]["host"]
+      uri = URI.parse(config[type]["host"])
+      @host = uri.host.nil? ? uri.to_s : uri.host
       @port = config[type]["port"]
       @daemonize = options[:daemonize]
       @pid = options[:pid]
@@ -28,10 +29,7 @@ module Siffer
     def run
       daemonize
       server = best_available_server
-      options = {
-        :Host => host,
-        :Port => port
-      }
+      options = { :Host => host, :Port => port }
       component.wake_up if component.respond_to?("wake_up")
       app = component_wrapped_in_environment
       server.run app, options

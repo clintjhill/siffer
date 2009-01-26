@@ -6,22 +6,23 @@ module Siffer
     end
 
     def call(env)
-      @env = env
-      # Maybe there is a better way to pick the body of the input
-      # instead of reading it then stuffing it back in ??
       @msg = env["rack.input"].read
       log_request
-      env["rack.input"] = StringIO.new(@msg)
+      env["rack.input"].rewind
       @app.call(env)
     end
     
     def log_request
       @now = Time.now
-      message = Siffer::Messages::RequestBody.parse(@msg)
+      message = Siffer::Messages::RequestBody.parse(@msg).type rescue "Unknown"
+      host = Siffer::Messages::RequestBody.parse(@msg).source_id rescue "Unknown Source"
+      if host.nil? or host == "" 
+        host = "Unknown Source"
+      end
       @log << %{%s request made by %s on %s at %s\n} %
         [
-         message.type,
-         @env["REMOTE_USER"],
+         message,
+         host,
          @now.strftime("%b/%d/%Y"),
          @now.strftime("%H:%M:%S")
         ]

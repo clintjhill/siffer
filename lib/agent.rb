@@ -7,8 +7,8 @@ module Siffer
     attr_reader :name, :host, :port, :admin, :server
     
     def initialize(options = {})
-      raise "Server URL(s) required" unless options.include? "servers"
-      @server = options["servers"]
+      raise "Zone Integration Server URL required" unless options.include? "server"
+      @server = options["server"]
       raise "Administration URL required" unless options.include? "admin"
       @admin = options["admin"]
       @name = options["name"] || "Default Agent"
@@ -19,7 +19,9 @@ module Siffer
     
     def call(env)
       with_each_request(env) do
-        
+        #process_event
+        #process_request
+        #process_response
       end
     end
 

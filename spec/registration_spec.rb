@@ -19,14 +19,14 @@ describe Siffer::Registration do
     msg.content do |xml|
       xml.SIF_Ping
     end
-    res = Rack::MockRequest.new(@server).post("/",:input => msg)
+    res = response_to(msg)
     res.body.should match(/SIF_Category>4/)
     res.body.should match(/SIF_Code>9/)
   end
   
   it "should return ACL for successful registration" do
     msg = Siffer::Messages::Register.new("Default Agent", "Default Agent")
-    res = Rack::MockRequest.new(@server).post("/",:input => msg)
+    res = response_to(msg)
     res.body.should match(/SIF_Ack/)
     res.body.should match(/SIF_Status/)
   end

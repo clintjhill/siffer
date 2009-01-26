@@ -19,8 +19,17 @@ end
 # the Response object for each Request.
 def for_every_path(options = {}, &block)
   component = options.delete(:on)
+  options["CONTENT_TYPE"] ||= Siffer::Messaging::MIME_TYPES["appxml"]
   Siffer::Protocol::ACCEPTABLE_PATHS.each do |name,path|
     res = Rack::MockRequest.new(component).post(path,options)
     yield res
   end
+end
+
+# Provides the minium to get a response from a Siffer::Server
+def response_to(msg, &block)
+  Rack::MockRequest.new(Siffer::Server.new("admin" => "none")
+                    ).post("/",{
+                    :input => msg, 
+                    "CONTENT_TYPE" => Siffer::Messaging::MIME_TYPES["appxml"]})
 end

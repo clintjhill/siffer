@@ -29,7 +29,7 @@ describe Siffer::Container, "options" do
           "host" => 'localhost',
           "port" => 8200,
           "admin" => 'http://localhost:3000/',
-          "servers" => 'http://localhost:4001/'
+          "server" => 'http://localhost:4001/'
         }
       }
     }
@@ -88,7 +88,7 @@ describe Siffer::Container, "runtime" do
           "host" => 'localhost',
           "port" => 8210,
           "admin" => 'http://localhost:3000/',
-          "servers" => 'http://localhost:4001/'
+          "server" => 'http://localhost:4001/'
         }
       }
     }

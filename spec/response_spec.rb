@@ -4,9 +4,9 @@ require 'webrick'
 Thread.abort_on_exception = true
 
 describe Siffer::Response do
-  it "should default content-type to application/xml" do
+  it "should default content-type to application/xml with UTF-8" do
     response = Siffer::Response.new()
-    response.content_type.should == Siffer::Messaging::MIME_TYPES["appxml"]
+    response.content_type.should == Siffer::Messaging::MIME_TYPES["appxmlencoded"]
   end
   
   it "should receive response from url,data" do

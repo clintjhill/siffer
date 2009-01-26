@@ -31,9 +31,9 @@ module Siffer
          @response = Response.new(Siffer::Protocol::HTTP_STATUS_CODES[406],
                       406,
                       {"Content-Type" => MIME_TYPES["htm"]})
-      rescue MalformedXml; error_response(1,2);
-      rescue MalformedSIFMessage; error_response(12,2);
-      rescue VersionMismatch; error_response(12,3);
+      rescue MalformedXml; error_response(1,2,"There was no XML body to parse.");
+      rescue MalformedSIFMessage; error_response(12,2,"The XML was not a recognizable SIF Message.");
+      rescue VersionMismatch; error_response(12,3,"The SIF version did not match supported versions.");
       rescue XmlNsMismatch; error_response(1,4,"XMLNS not compatible with SIF")
       end
     end
@@ -48,7 +48,9 @@ module Siffer
     # BadContentType exception.
     def check_content_type
       content_type = @request.content_type
-      unless [MIME_TYPES["xml"], MIME_TYPES["appxml"]].include? content_type
+      unless [MIME_TYPES["xml"], 
+              MIME_TYPES["appxml"], 
+              MIME_TYPES["appxmlencoded"]].include? content_type
         raise BadContentType
       end
     end
@@ -86,7 +88,8 @@ module Siffer
   
     # MIME Types used in Siffer
     MIME_TYPES = {
-      "appxml" => "application/xml;charset=utf-8", 
+      "appxmlencoded" => "application/xml;charset=utf-8", 
+      "appxml" => "application/xml",
       "htm"   => "text/html",
       "html"  => "text/html",
       "xml"   => "text/xml"

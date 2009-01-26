@@ -29,9 +29,11 @@ module Siffer
     def call(env)
       with_each_request(env) do
          process_registration
-          # process_provision
-          # process_subscription
-          # process_event
+          # process_provision       MAYBE SAME MODULE
+          # process_subscription    MAYBE SAME MODULE
+          # process_event (server process not agent)    REDIRECTS
+          # process_request (server process not agent)  REDIRECTS
+          # process_response (server process not agent) REDIRECTS
       end
     end
           

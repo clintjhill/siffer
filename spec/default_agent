@@ -2,5 +2,5 @@ agent:
   name: 'Clints Agent'
   host: 'localhost'
   port: 4002
-  servers: 'http://localhost:4001/'
+  server: 'http://localhost:4001/'
   admin: 'http://localhost:3000'

@@ -3,7 +3,7 @@ require 'webrick'
 
 describe Siffer::Agent do
   it "should instantiate with default host, port, name" do
-    agent = Siffer::Agent.new("servers" => 'none', "admin" => 'none')
+    agent = Siffer::Agent.new("server" => 'none', "admin" => 'none')
     agent.host.should == "localhost"
     agent.port.should == 8300
     agent.name.should == "Default Agent"
@@ -11,7 +11,7 @@ describe Siffer::Agent do
   
   it "should allow defaults to be overriden" do
     agent = Siffer::Agent.new("admin" => 'none',
-                              "servers" => 'none', 
+                              "server" => 'none', 
                               "name" => "name",
                               "host" => "test",
                               "port" => 222)
@@ -23,30 +23,25 @@ describe Siffer::Agent do
   it "should require a server url to register with" do
     lambda {
       agent = Siffer::Agent.new 
-      }.should raise_error("Server URL(s) required")
+      }.should raise_error("Zone Integration Server URL required")
   end
   
   it "should require an admin URL" do
     lambda {
-      agent = Siffer::Agent.new("servers" => "none")
+      agent = Siffer::Agent.new("server" => "none")
     }.should raise_error("Administration URL required")
-  end
-  
-  it "should respond to uri" do
-    agent = Siffer::Agent.new("admin" => 'none', "servers" => 'none')
-    agent.uri.should == "http://localhost:8300"
   end
   
   it "should register with server(s) on wake-up" do
     with_fake_server(Siffer::Server.new("admin" => "none")) do |url|
-      agent = Siffer::Agent.new("admin" => 'none', "servers" => url)
+      agent = Siffer::Agent.new("admin" => 'none', "server" => url)
       agent.wake_up
       agent.should be_registered
     end
   end
   
   it "should be unregistered by default" do
-    agent = Siffer::Agent.new("admin" => 'none', "servers" => 'none')
+    agent = Siffer::Agent.new("admin" => 'none', "server" => 'none')
     agent.should_not be_registered
   end
   

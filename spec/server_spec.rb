@@ -27,9 +27,4 @@ describe Siffer::Server do
     }.should raise_error("Administration URL required")
   end
   
-  it "should respond to uri" do
-    server = Siffer::Server.new("admin" => 'none')
-    server.uri.should == "http://localhost:8300"
-  end
-  
 end

@@ -14,18 +14,22 @@ module Siffer
     # * Unknown PATH
     # * Non-POST request
     def request_failed_protocol?
-      begin
-        check_path_against_protocol
-      rescue UnknownPath
-        # TODO: Make a better Not Found response
-        @response = Response.new(HTTP_STATUS_CODES[404],
-                      404,
-                      {"Content-Type" => Siffer::Messaging::MIME_TYPES["htm"]})
-      rescue NonPostRequest
-        # TODO: Make a better Method Not Allowed response
-        @response = Response.new(HTTP_STATUS_CODES[405],
-                      405,
-                      {"Content-Type" => Siffer::Messaging::MIME_TYPES["htm"]})
+      if @request.get? and @request.path_info == ACCEPTABLE_PATHS[:root]
+        root_response
+      else
+        begin
+          check_path_against_protocol
+        rescue UnknownPath
+          # TODO: Make a better Not Found response
+          @response = Response.new(HTTP_STATUS_CODES[404],
+                        404,
+                        {"Content-Type" => MIME_TYPES["htm"]})
+        rescue NonPostRequest
+          # TODO: Make a better Method Not Allowed response
+          @response = Response.new(HTTP_STATUS_CODES[405],
+                        405,
+                        {"Content-Type" => MIME_TYPES["htm"]})
+        end
       end
     end
     
@@ -35,14 +39,14 @@ module Siffer
       unless ACCEPTABLE_PATHS.has_value? @request.path_info
         raise UnknownPath
       end
-      unless @request.post? 
+      unless @request.post?
         raise NonPostRequest
       end
     end
     
     # Returns the URI of the component (Server or Agent)
     def uri
-       URI.parse("http://#{host}:#{port}").to_s
+       URI.parse("http://#{host.gsub(/(http|https):\/\//,"")}:#{port}").to_s
     end
     
     # Provides a context for each request. Creates the @request, @response and
@@ -80,21 +84,32 @@ module Siffer
       if @response.nil?
         err = <<"ERR"
 You are receiving this message because you failed to 
-provide enough information to respond to. This is likely due
-to the message type missing (i.e. Register,Provide) or possibly
-not enough information to process effectively. Please check the 
-message you are sending and resend after any corrections.
+provide enough information to respond to. This message 
+went completely through the messaging stack and
+failed to instigate a response.
+ 
+Please check the message you are sending and resend after 
+any corrections.
 ERR
         !error_response(12,1,err)
       end
     end
+    
+    def root_response
+      html = <<"HTML"
+<html>
+  <body>
+    <h1>Siffer Endpoint</h1>
+    <p>You have reached a Siffer component.</p>
+  </body>
+</html>
+HTML
+      @response = Response.new(html,200,{"Content-Type" => MIME_TYPES["htm"]})
+    end
         
     # Paths that comply with the messaging protocol determined
     # by the SIF Specification. These are Siffer specific and not
-    # spelled out in SIF Specification (rather implied). Each path
-    # will generate it's own predicate method (i.e. #ping?) that can
-    # be used to determine the requests path based on the content of the
-    # message or the path-info of the request.
+    # spelled out in SIF Specification (rather implied). 
     ACCEPTABLE_PATHS = {
       :root => "/",
       :ping => "/ping",
@@ -102,16 +117,6 @@ ERR
       :register => "/register"
     }
     
-    ACCEPTABLE_PATHS.each do |name,path|
-      define_method("#{name.to_s}?") do
-        @request.message.type.downcase == name.to_s
-        # The difference in these lines is the difference between allowing
-        # any message to come through any PATH or forcing PATH and message
-        # to match. What is better?
-        # TODO: Decide on protocol validations !
-        #@request.path_info == path || req_body.type.downcase == name.to_s
-      end
-    end
     
     # Every standard HTTP code mapped to the appropriate message.
     # Stolen from Mongrel.
