@@ -40,7 +40,7 @@ namespace :spec do
   Spec::Rake::SpecTask.new('default') do |t|
       t.spec_opts = ["--format", "specdoc", "--colour"]
       t.spec_files = Dir['spec/**/*_spec.rb'].sort
-      t.libs = ['lib']
+      t.libs = ['lib','lib/siffer']
       t.rcov = true
       t.rcov_opts = ["--exclude 'bin,doc,pkg,spec,#{Gem::path.join(',')}'"] 
   end
