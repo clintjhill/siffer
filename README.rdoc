@@ -7,6 +7,12 @@ Framework) in Ruby. The project is Ruby based and includes all of the SIF
 infrastructure (Data Model, Agents, Zone Integration Servers and even database 
 stores). 
 
+Currently this project is incomplete. The central administration website
+mentioned below is not a part of this code base. There are plans to consolidate
+all of it into one, but architecture decisions haven't been made yet. 
+
+Stay Tuned!
+
 == Goal
 
 The overriding goal of this project is to provide anyone in the education 
@@ -22,7 +28,10 @@ of their deployment from a command line or browser.
 == Philosophy 
 
 Remove the complexity from the implementation. Make the execution and 
-deployment of SIF easy.
+deployment of SIF easy. 
+
+Make SIF more REST'ful. As much as possible expose the actions and data models
+through the URI and URL of ZIS and Agent components.
 
 == Implementation Information (sifinfo.org)
 
