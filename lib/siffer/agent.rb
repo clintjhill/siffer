@@ -24,11 +24,20 @@ module Siffer
         #process_response
       end
     end
-
+    
+    # Wakes up the agent. Also registers with ZIS if not
+    # already registered.
     def wake_up
       self_register unless registered? 
+      @awake = true
     end
     
+    # Returns state of Agent.
+    def awake?
+      @awake
+    end
+    
+    # Sends Registration message to ZIS
     def self_register
       registration = Siffer::Messages::Register.new(name, name)
       response = Response.from(server,registration) 
@@ -36,6 +45,7 @@ module Siffer
       @registered = response.ok?
     end
     
+    # Returns registration state of Agent.
     def registered?
       @registered
     end

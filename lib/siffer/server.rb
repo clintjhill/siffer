@@ -8,7 +8,7 @@ module Siffer
     include Siffer::Protocol
     include Siffer::Registration
     
-    attr_reader :name, :host, :port, :min_buffer, :agents
+    attr_reader :name, :host, :port, :min_buffer
     
     ## options Parameter
     # name = The name of the ZIS
@@ -22,7 +22,6 @@ module Siffer
       @host = options["host"] || "localhost"
       @port = options["port"] || 8300
       @min_buffer = options["min_buffer"] || 1024
-      @agents = {}
     end
     
     # Process the request with all the SIF protocols
@@ -36,7 +35,7 @@ module Siffer
           # process_response (server process not agent) REDIRECTS
       end
     end
-          
+                  
   end
 
 end

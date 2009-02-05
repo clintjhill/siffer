@@ -49,11 +49,16 @@ module Siffer
       end
     end
     
+    # Returns true if the agent is included in the list of Agents
+    # previously registered.
+    def registered?(agent)
+      false
+    end
+    
     # We may not do anything here - will we pre-permit sources to register?
     # We could possibly call the Central Admin to qualify the source there?
     def validate_source_id
     end
-    
     
     # We need to check for permissions previously assigned for this
     # agent (possibly from Central Admin).
@@ -75,12 +80,6 @@ module Siffer
       if @registration.max_buffer < min_buffer
         error_response(5,6)
       end
-    end
-    
-    # Returns true if the agent is included in the list of Agents
-    # previously registered.
-    def registered?(agent)
-      agents.has_key? agent
     end
     
   end

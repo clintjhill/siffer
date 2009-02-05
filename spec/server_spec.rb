@@ -27,4 +27,14 @@ describe Siffer::Server do
     }.should raise_error("Administration URL required")
   end
   
+  
+  it "should allow agent registration detection" do
+    fail
+  end
+  
+  it "should fail agent registration detection if admin unreachable" do
+    server = Siffer::Server.new("admin" => 'none')
+    server.registered?("Default Agent").should be_false
+  end
+  
 end

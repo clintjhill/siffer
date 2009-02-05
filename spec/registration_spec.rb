@@ -8,12 +8,6 @@ describe Siffer::Registration do
     @server = Siffer::Server.new("admin" => "none")
   end
   
-  it "should determine agent registration" do
-    @server.registered?("Default Agent").should be_false
-    @server.agents["Default Agent"] = "http://localhost"
-    @server.registered?("Default Agent").should be_true
-  end
-  
   it "should return not registered message for non-registered agents" do
     msg = Siffer::Messages::Message.new("Default Agent")
     msg.content do |xml|
