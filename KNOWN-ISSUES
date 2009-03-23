@@ -7,5 +7,5 @@
 * SMB isn't even considered yet.
 * Concurrency is not tested.
 * Bad message (exception) on kill for siffer CLI
-* Exception when killing component from CLI and PID file deleted
+* Exception when killing component from CLI and PID file already deleted
 * Poor messages on CLI actions (i.e. stop|kill doesn't give a success message)

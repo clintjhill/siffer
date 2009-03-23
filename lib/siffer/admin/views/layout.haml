@@ -1,0 +1,39 @@
+!!! XML
+!!!
+%html
+  %head
+    %title Siffer Central Administration
+    %link{:rel => 'stylesheet', :href => "/stylesheets/sif_admin.css", :type => 'text/css', :media => 'screen'}
+  %body
+    %div{:id => "wrapper"}
+      %div{:id => "header"}
+        %a{:id => "header_home_link", :href => "/"}
+          %img{:src => "/images/logo.gif", :alt => "Siffer Central Administration"}
+        %div{:id => "top-nav"}
+          %ul
+            %li
+              %a{:href => "/"} Home
+            %li
+              %a{:href => "/servers"} Servers
+            %li
+              %a{:href => "/common_objects"} Common Objects
+      %div{:class => "clear_me"}
+      %div{:id => "main"}
+        %table
+          %tr
+            %td
+              %div{:id => "navigation"}
+                %ul
+                  %li
+                    %a{:href => "/"} Home
+                  %li
+                    %a{:href => "/servers"} Servers
+                  %li
+                    %a{:href => "/common_objects"} Common Objects
+            %td
+              %div{:id => "content"}
+                = yield
+      %div{:class => "clear_me"}
+      %div{:id => "footer"}
+        %div{:id => "footer-copyright"}
+          Siffer Central Administration - &copy;2008 h3o(software) 

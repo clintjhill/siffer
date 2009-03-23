@@ -25,6 +25,9 @@ spec = Gem::Specification.new do |s|
   s.add_dependency "rack"
   s.add_dependency "hpricot"
   s.add_dependency "builder"
+  s.add_dependency "sinatra"
+  s.add_dependency "sequel"
+  s.add_dependency "haml"
 end
 
 Rake::GemPackageTask.new(spec) do |package|

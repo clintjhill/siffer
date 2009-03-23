@@ -1,0 +1,21 @@
+%h2 New Server
+= error_messages_for :server
+%form{:action => "/servers",:method => "post"}
+  %p
+    %label{:for => "server_name"} Name:
+    %br
+    %input{:type => "text", :name => "server[name]", :id => "server_name"}
+  %p
+    %label{:for => "server_host"} Host:
+    %br
+    %input{:type => "text", :name => "server[host]", :id => "server_host", :value => "localhost"}
+  %p
+    %label{:for => "server_port"} Port:
+    %br
+    %input{:type => "text", :name => "server[port]", :id => "server_port", :value => 2828}
+  %p
+    %label{:for => "server_minimum_buffer"} Minimum Buffer:
+    %br
+    %input{:type => "text", :name => "server[minimum_buffer]", :id => "server_minimum_buffer", :value => 1024}
+  %input{:type => "submit", :value => "Create"}
+  %a{:href => "/servers"} Cancel

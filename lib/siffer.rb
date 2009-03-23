@@ -39,6 +39,30 @@ Siffer.autoload :Protocol, "siffer/protocol"
 Siffer.autoload :Messaging, "siffer/messaging"
 Siffer.autoload :Registration, "siffer/registration"
 
-%w(server agent response request container request_logger).each do |component|
+%w(admin server agent response request container request_logger).each do |component|
   require "siffer/#{component}"
+end
+
+class Hash
+  
+  # Return a new hash with all keys converted to symbols.
+  # Will recursively check values to symbolize hash keys in nested hashes.
+  def symbolize_keys
+    inject({}) do |options, (key, value)|
+      if value.is_a? Hash
+        value = value.symbolize_keys
+      end
+      options[(key.to_sym rescue key) || key] = value
+      options
+    end
+  end
+  
+end
+
+class String
+  
+  def humanize
+    gsub(/_id$/, "").gsub(/_/, " ").capitalize
+  end
+  
 end

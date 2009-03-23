@@ -3,18 +3,20 @@
 require 'rubygems'
 require 'optparse'
 require 'yaml'
-# For test purposes rescue the require so we can get the local lib
-begin
-  require 'siffer'
-rescue LoadError
-  require 'lib/siffer'
-end
+libdir = File.join(File.dirname(__FILE__),"..","lib")
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+require 'siffer'
+
 options = {:environment => "development"}
 
 opts = OptionParser.new("", 24, ' ') { |opts| 
   opts.banner = "Usage: siffer [start|run|stop|kill] [component] [options]"
   
   opts.separator ""
+  opts.separator "[component] can be admin or the file path to your downloaded component"
+  opts.separator ""
+  opts.separator "Example:"
+  
   opts.separator "Siffer options:"
   
   opts.on("-e", 
@@ -50,7 +52,11 @@ unless options[:component] = ARGV[1]
   abort opts.to_s
 end
 
-options[:config] = YAML.load_file(File.expand_path(options[:component]))
+if options[:component] == "admin"
+  options[:config] = {"admin" => {}}
+else
+  options[:config] = YAML.load_file(File.expand_path(options[:component]))
+end
 
 component = options[:component].split('/')[-1]
 cwd = File.expand_path(File.dirname(options[:component]))
@@ -61,6 +67,12 @@ if command == "start" or command == "run"
   if options[:environment] == "test"
     puts options.inspect # For testing purposes let's just output the options
   else
+    if component == "admin"
+      puts "Siffer Central Admin has been started!"
+    else
+      puts "Siffer Component: #{component} has been started!"
+    end
+    puts "You can see it here: http://#{container.host}:#{container.port}"
     container.run
   end
 else

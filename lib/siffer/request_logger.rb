@@ -19,12 +19,13 @@ module Siffer
       if host.nil? or host == "" 
         host = "Unknown Source"
       end
-      @log << %{%s request made by %s on %s at %s\n} %
+      @log << %{%s request made by %s on %s at %s. Body: %s\n} %
         [
          message,
          host,
          @now.strftime("%b/%d/%Y"),
-         @now.strftime("%H:%M:%S")
+         @now.strftime("%H:%M:%S"),
+         @msg
         ]
     end
  

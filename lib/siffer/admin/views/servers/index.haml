@@ -1,0 +1,10 @@
+%h2 Zone Integration Servers
+%div{:id => "messages"}
+  %div{:id => "ping", :style => "display: none;"}
+%a{:href => "/servers/new"} New Server
+%div{:id => "servers"}
+  - @servers.each do |server|
+    %p
+      = "#{server.name}"
+      %a{:href => "/servers/#{server.id}/edit"} Edit
+%a{:href => "/servers/new"} New Server
