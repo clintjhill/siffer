@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'activesupport'
 require 'uuid'
 require 'rack'
 require 'builder'
@@ -13,7 +14,7 @@ module Siffer
 
     VENDOR = "h3o(software)" unless defined?(Siffer::VENDOR)
     VERSION = [0,0,5] unless defined?(Siffer::VERSION)
-    SIF_VERSION = [2,2,0] unless defined?(Siffer::SIF_VERSION)
+    SIF_VERSION = [2,3,0] unless defined?(Siffer::SIF_VERSION)
     SIF_XMLNS = "http://www.sifinfo.org/infrastructure/2.x" unless defined?(Siffer::SIF_XMLNS)
   
     # The vendor of this SIF implementation (self describing for Agents)
@@ -35,34 +36,11 @@ module Siffer
 end
 
 Siffer.autoload :Messages, "siffer/messages"
+Siffer.autoload :Models, "siffer/models"
 Siffer.autoload :Protocol, "siffer/protocol"
 Siffer.autoload :Messaging, "siffer/messaging"
 Siffer.autoload :Registration, "siffer/registration"
 
 %w(admin server agent response request container request_logger).each do |component|
   require "siffer/#{component}"
-end
-
-class Hash
-  
-  # Return a new hash with all keys converted to symbols.
-  # Will recursively check values to symbolize hash keys in nested hashes.
-  def symbolize_keys
-    inject({}) do |options, (key, value)|
-      if value.is_a? Hash
-        value = value.symbolize_keys
-      end
-      options[(key.to_sym rescue key) || key] = value
-      options
-    end
-  end
-  
-end
-
-class String
-  
-  def humanize
-    gsub(/_id$/, "").gsub(/_/, " ").capitalize
-  end
-  
 end

@@ -50,6 +50,10 @@ module Siffer
       end
       alias :to_str :read
       
+      def length
+        content.length
+      end
+      
       # Each Message requires a Header to identify the source.
       # You shouldn't need to initialize this by itself, it is
       # used by Message.

@@ -25,10 +25,10 @@ module Siffer
       
       module Models
         class Server < Sequel::Model(Database.Tables([:servers]))
-          validates do
-           presence_of :name, :host, :port, :minimum_buffer
-           numericality_of :port, :minimum_buffer
-          end
+          # validates do
+          #            presence_of :name, :host, :port, :minimum_buffer
+          #            numericality_of :port, :minimum_buffer
+          #           end
         end
       end
       
