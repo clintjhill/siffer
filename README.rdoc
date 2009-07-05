@@ -7,23 +7,13 @@ Framework) in Ruby. The project is Ruby based and includes all of the SIF
 infrastructure (Data Model, Agents, Zone Integration Servers and even database 
 stores). 
 
-Currently this project is incomplete. The central administration website
-mentioned below is not a part of this code base. There are plans to consolidate
-all of it into one, but architecture decisions haven't been made yet. 
 
-Stay Tuned!
+It's currently incomplete - Stay Tuned!
 
 == Goal
 
 The overriding goal of this project is to provide anyone in the education 
-industry a quick, easy and simple SIF implementation tool. The entire system 
-can be managed by a browser.
-
-=== Setup and Deployment
-
-Siffer is easy to install and setup. Zone Integration Servers and Agents can be 
-created from the browser. Administrators will be able to manage all components 
-of their deployment from a command line or browser.
+industry a quick, easy and simple SIF implementation tool. 
 
 == Philosophy 
 
@@ -35,10 +25,9 @@ through the URI and URL of ZIS and Agent components.
 
 == Implementation Information (sifinfo.org)
 
-This implementation is based on version 2.2 of the SIF Specification. The 
-Specification is in {PDF}[link:../SIF%20ImplementationSpecification.pdf] format 
-inside the doc folder.
-
+This implementation is based on version 2.3 of the SIF Specification. The 
+Specification is in {PDF}[link:../SIF%20Spec%202.3.pdf] format inside the doc folder.
+It can also be found here: http://specification.sifinfo.org/Implementation/2.3/
 
 More information here: http://sifinfo.org.
 
