@@ -42,6 +42,14 @@ describe Ack do
     Ack.should require(:original_msg_id)
   end
   
+  it "should conditionally require error on nil status" do
+    Ack.should conditionally_require(:error, {:status => nil})
+  end
+  
+  it "should conditionally require status on nil error" do
+    Ack.should conditionally_require(:status, {:error => nil})
+  end
+  
   it "should be nested in message" do
     @ack = Ack.new(:source_id => "Test Ack", :original_source_id => "11111", :original_msg_id => "22222", :status => "good")
     @ack.should match(/^<SIF_Message/)

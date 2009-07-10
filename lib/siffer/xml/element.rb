@@ -91,9 +91,8 @@ module Siffer
         # Validates the conditional values are populated with values.
         def check_conditional(values)
           unless conditional.empty?
-            unless values.keys.any?{|v| conditional.has_key?(v)}
+            unless values.keys.any?{|v| conditional.has_key?(v) && values[v]}
               conditional.each do |element, conditions|
-                
                 # for each condition (if its a hash) lets check values
                 conditions.each do |condition|
                   if condition.is_a?(Hash) and values.has_key?(condition.keys.first)
