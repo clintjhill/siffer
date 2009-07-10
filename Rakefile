@@ -1,9 +1,9 @@
 require 'rake'
 require 'rake/clean'                       
 require 'rake/gempackagetask'
-require 'rake/rdoctask'
 require 'spec/rake/spectask'
 require 'fileutils'
+require 'yard'
 include FileUtils
 require File.join(File.dirname(__FILE__),"lib","siffer")
 include Siffer
@@ -18,16 +18,12 @@ spec = Gem::Specification.new do |s|
   s.summary = "Siffer - School Interoperability Framework by h3o(software)"
   s.rubyforge_project = "siffer"
   s.require_path = "lib"
-  s.files        = %w( LICENSE README.rdoc Rakefile ) + Dir["{spec,lib,doc}/**/*"]
-  s.bindir = "bin"
-  s.executables = %w( siffer )
+  s.files        = %w( LICENSE README Rakefile ) + Dir["{spec,lib,doc}/**/*"]
+  # s.bindir = "bin"
+  # s.executables = %w( siffer )
   s.add_dependency "uuid"
-  s.add_dependency "rack"
-  s.add_dependency "hpricot"
+  s.add_dependency "activesupport"
   s.add_dependency "builder"
-  s.add_dependency "sinatra"
-  s.add_dependency "sequel"
-  s.add_dependency "haml"
 end
 
 Rake::GemPackageTask.new(spec) do |package|
@@ -43,24 +39,17 @@ namespace :spec do
   Spec::Rake::SpecTask.new('default') do |t|
       t.spec_opts = ["--format", "specdoc", "--colour"]
       t.spec_files = Dir['spec/**/*_spec.rb'].sort
-      t.libs = ['lib','lib/siffer']
-      t.rcov = true
-      t.rcov_opts = ["--exclude 'bin,doc,pkg,spec,#{Gem::path.join(',')}'"] 
+      t.libs = ['lib','lib/siffer'] 
   end
 end
 
 ##############################################################################
 # Documentation
 ##############################################################################
-task :doc => ["doc:rdoc"]
+task :doc => ["doc:yardoc"]
 namespace :doc do
-  Rake::RDocTask.new do |rdoc|
-    files = ["README.rdoc","LICENSE","lib/**/*.rb"]
-    rdoc.rdoc_files.add(files)
-    rdoc.main = "README.rdoc"
-    rdoc.title = "Siffer == h3o(software) SIF"
-    rdoc.rdoc_dir = "doc/rdoc"
-    rdoc.options << "--line-numbers" << "--inline-source"
+  YARD::Rake::YardocTask.new do |t|
+    t.options = ['-odoc/yardoc', '-rREADME', '-mtextile'] # optional
   end
 end
 

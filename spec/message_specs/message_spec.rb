@@ -2,56 +2,80 @@ require File.join(File.dirname(__FILE__), "..", "spec_helper")
 
 include Siffer::Messages
 
-describe Message do
-
+describe Header do
+  
   before(:each) do
-    @message = Message.new("source_name") 
+    @header = Header.new(:source_id => "source_name")  
   end
   
-  it "should have SIF version" do
-    @message.version.should == Siffer.sif_version
+  it "should require source_id" do
+    Header.should require(:source_id)
   end
   
-  it "should have SIF xml namespace" do
-    @message.xmlns.should == Siffer.sif_xmlns
+  it "should have a timestamp" do
+    @header.timestamp.should_not be_nil
   end
   
-  it "should have a header" do
-    @message.header.should_not be_nil
-    @message.header.source_id.should == "source_name"
+  it "should have a GUID/UUID" do
+    @header.msg_id.should_not be_nil
   end
   
-  it "should raise exception for missing source identifier" do
-    lambda{
-      @message = Message.new(nil)
-    }.should raise_error("Source not provided.")
+  it "should have a GUID/UUID that matches SIF textual format" do
+    @header.msg_id.should_not match(/^[a-z\-\s]+$/)
+    @header.msg_id.should match(/^[A-F0-9]{32}$/)
+  end
+    
+end
+
+describe Security do
+  
+  it "should require SecureChannel" do
+    Security.should require(:secure_channel)
   end
   
-  it "should render SIF compliant instruct line" do
-    @message.content.should match(/<SIF_Message/)
-    @message.content.should match(/xmlns="#{Siffer.sif_xmlns}"/)
-    @message.content.should match(/version="#{Siffer.sif_version}"/)
-    @message.content.should match(/<\/SIF_Message>/)
+end
+
+describe SecureChannel do
+  
+  it "should require authentication level" do
+    SecureChannel.should require(:authentication_level)
   end
   
-  it "should respond to 'to_str'" do
-    @message.should respond_to("to_str")
-    @message.to_str.should match(/SIF_Message/)
+  it "should require encryption level" do
+    SecureChannel.should require(:encryption_level)
   end
   
-  it "should respond to 'read'" do
-    @message.should respond_to("read")
-    @message.read.should match(/SIF_Message/)
+end
+
+describe Message do
+  
+  it "should require Header" do
+    Message.should require(:header)
   end
   
-  it "should allow xmlns override" do
-    @message = Message.new("source", :xmlns => "bogus")
-    @message.xmlns.should == "bogus"
+  it "should require Header when subclassed" do
+    class Subbed < Message
+      element :doozy
+    end
+    Subbed.should require(:header)
   end
   
-  it "should allow version override" do
-    @message = Message.new("source", :version => '9.9')
-    @message.version.should == "9.9"
+  it "should have SIF version attribute" do
+    @message = Message.new(:source_id => "Test Source")
+    @message.class_attributes[:version].should == Siffer.sif_version
+  end
+  
+  it "should have SIF xml namespace attribute" do
+    @message = Message.new(:source_id => "Test Source")
+    @message.class_attributes[:xmlns].should == Siffer.sif_xmlns
   end
       
+end
+
+describe Contexts do
+  
+  it "should require a Context" do
+    Contexts.should require(:context)
+  end
+  
 end

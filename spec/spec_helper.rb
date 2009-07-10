@@ -1,35 +1,44 @@
 require File.join(File.dirname(__FILE__),"..", "lib","siffer")
 require 'spec'
 
-# Configures a WEBrick server and yields URL. When passed a block
-# starts and stops the server for the context. It returns what it 
-# receives from the request.
-def with_fake_server(app = nil)
-  fake_app = app || lambda { |env| [200,{},env["rack.input"].read] }
-  server = WEBrick::HTTPServer.new(:Host => '0.0.0.0',:Port => 9202)
-  server.mount "/", Rack::Handler::WEBrick, fake_app
-  Thread.new { server.start }
-  trap(:INT) { server.shutdown }
-  yield "http://localhost:9202/" if block_given?
-  server.shutdown
-end
-
-# Helper method to iterate all of the ACCEPTABLE_PATHS
-# on the specified component(Server/Agent). Yields
-# the Response object for each Request.
-def for_every_path(options = {}, &block)
-  component = options.delete(:on)
-  options["CONTENT_TYPE"] ||= Siffer::Messaging::MIME_TYPES["appxml"]
-  Siffer::Protocol::ACCEPTABLE_PATHS.each do |name,path|
-    res = Rack::MockRequest.new(component).post(path,options)
-    yield res
+# Makes checking mandatory fields much easier.
+# 
+#  class Model < Siffer::Xml::Body
+#    element :name, :type => :mandatory
+#  end
+#
+#  describe Model do
+#    it "should require Name" do
+#      Model.should require(:name)
+#    end
+#  end
+#
+Spec::Matchers.define :require do |field|
+  match do |obj|
+    # get all declared elements
+    declared = obj.instance_variable_get("@declared_values")
+    # fill them all with value of 1
+    filled = declared.inject({}){|acc,name| acc.merge(name => 1)}
+    begin
+      obj.new(filled.except(field)) # except the field were asserting is required
+      return false # if no exception thrown the spec fails
+    rescue Exception => e
+      # if the exception is a MandatoryError and the message matches our field GOOD!!!
+      e.is_a?(Siffer::Xml::MandatoryError) && e.message.match(/#{field.to_s.camelize}/)
+    end
   end
 end
 
-# Provides the minium to get a response from a Siffer::Server
-def response_to(msg, &block)
-  Rack::MockRequest.new(Siffer::Server.new("admin" => "none")
-                    ).post("/",{
-                    :input => msg, 
-                    "CONTENT_TYPE" => Siffer::Messaging::MIME_TYPES["appxml"]})
+Spec::Matchers.define :conditionally_require do |field, conditions|
+  match do |obj|
+    declared = obj.declared_values
+    filled = declared.inject({}){|acc,name| acc.merge(name => 1)}
+    updated = filled.update(conditions).except(field)
+    begin
+      obj.new(updated)
+      return false
+    rescue Exception => e
+      e.is_a?(Siffer::Xml::ConditionalError) && e.message.match(/#{field.to_s.camelize}/)
+    end
+  end
 end

@@ -1,11 +1,3 @@
 = Known issues with Siffer
 
-* Standard 404, 405, 406 errors are not well formatted and with little info. 
-* No data store for agent provisioning/permissions/registration.
-* Redirection is not facilitated.
-* Not all messages are currently handled.
-* SMB isn't even considered yet.
-* Concurrency is not tested.
-* Bad message (exception) on kill for siffer CLI
-* Exception when killing component from CLI and PID file already deleted
-* Poor messages on CLI actions (i.e. stop|kill doesn't give a success message)
+* Not done

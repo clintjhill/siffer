@@ -1,6 +1,0 @@
----
-server:
-  name: 'Clints Server'
-  host: 'localhost'
-  port: 4001
-  admin: 'http://localhost:3000/'

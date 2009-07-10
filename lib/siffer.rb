@@ -1,12 +1,7 @@
 require 'rubygems'
 require 'activesupport'
 require 'uuid'
-require 'rack'
 require 'builder'
-require 'net/http'
-require 'net/https'
-require 'rexml/document'
-require 'hpricot'
 
 $: << File.expand_path(File.dirname(__FILE__))
 
@@ -32,15 +27,12 @@ module Siffer
     # The root directory that the SIF implementation is running from
     def self.root() @root ||= Dir.pwd end
     def self.root=(value) @root = value end
-      
+    
 end
 
 Siffer.autoload :Messages, "siffer/messages"
 Siffer.autoload :Models, "siffer/models"
-Siffer.autoload :Protocol, "siffer/protocol"
-Siffer.autoload :Messaging, "siffer/messaging"
-Siffer.autoload :Registration, "siffer/registration"
 
-%w(admin server agent response request container request_logger).each do |component|
-  require "siffer/#{component}"
-end
+require "siffer/xml/element"
+require "siffer/xml/attribute"
+require "siffer/xml/body"
