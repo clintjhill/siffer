@@ -4,7 +4,6 @@ module Siffer
     # This class is used as the base for all SIF common types.
     class SifXml < Siffer::Xml::Body
       private
-      
       # Overriden to prefix SIF to the element name
       def element_name(name = self.class)
         "SIF_#{name.to_s.split("::").last.camelize}"
@@ -74,59 +73,50 @@ module Siffer
       
       class << self
         def declared_values
-          declared = []
-          declared << instance_variable_get("@declared_values") unless instance_variable_get("@declared_values").nil?
-          if !instance_of?(Message) && superclass == Message
-            declared << superclass.instance_variable_get("@declared_values") unless superclass.instance_variable_get("@declared_values").nil?
+          declared = super
+          if subclass_of_message
+            declared << superclass.instance_variable_get("@declared_values")
           end
           declared.flatten
         end
-      end
-      
-      # Overriden to check for subclassing
-      def declared_values
-        declared = super
-        if subclass_of_message
-          declared << self.class.superclass.instance_variable_get("@declared_values") unless self.class.superclass.instance_variable_get("@declared_values").nil?
+        
+        def mandatory
+          mandated = super
+          if subclass_of_message
+            mandated << superclass.instance_variable_get("@mandatory")
+          end
+          mandated.flatten
         end
-        declared.flatten  
-      end
-      
-      # Overriden to check for subclassing
-      def mandatory
-        mandated = super
-        if subclass_of_message
-          mandated << self.class.superclass.instance_variable_get("@mandatory") unless self.class.superclass.instance_variable_get("@mandatory").nil?
+        
+        def conditional
+          conditioned = super
+          if subclass_of_message
+            conditioned.update superclass.instance_variable_get("@conditional")
+          end
+          conditioned
         end
-        mandated.flatten
-      end
-      
-      # Overriden to check for subclassing
-      def conditional
-        conditioned = super
-        if subclass_of_message
-          conditioned.update self.class.superclass.instance_variable_get("@conditional") unless self.class.superclass.instance_variable_get("@conditional").nil?
+        
+        # Returns true if this instance is not a Message and its parent class is a Message.
+        def subclass_of_message
+          !instance_of?(Message) && superclass == Message
         end
-        conditioned
       end
       
       private
       
+      def subclass_of_message
+        self.class.subclass_of_message
+      end
+      
       # Writes the elements and attributes to a SIF specific XML string
       def write_body(xml)
         if subclass_of_message
-          super_attrs = camelized_attributes(self.class.superclass.instance_variable_get("@attributes"))
+          super_attrs = camelized_attributes(self.class.superclass.class_attributes)
           args = (super_attrs.nil?) ? element_name(self.class.superclass) : [element_name(self.class.superclass), super_attrs]
           xml.tag!(*args) { |body| super(body) }
         else
           super(xml)
         end
-      end
-      
-      # Returns true if this instance is not a Message and its
-      # parent class is a Message.
-      def subclass_of_message
-        !self.instance_of?(Message) && self.class.superclass == Message
       end
       
     end

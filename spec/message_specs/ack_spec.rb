@@ -7,12 +7,6 @@ describe Status do
   it "should require code" do
     Status.should require(:code)
   end
-  
-  it "should provide success helper" do
-    @success = Status.success
-    @success.code.should eql(0)
-    @success.desc.should eql(STATUS_CODE[0])
-  end
 
 end
 
@@ -43,11 +37,11 @@ describe Ack do
   end
   
   it "should conditionally require error on nil status" do
-    Ack.should conditionally_require(:error, {:status => nil})
+    Ack.should conditionally_require(:error, :status => nil)
   end
   
   it "should conditionally require status on nil error" do
-    Ack.should conditionally_require(:status, {:error => nil})
+    Ack.should conditionally_require(:status, :error => nil)
   end
   
   it "should be nested in message" do

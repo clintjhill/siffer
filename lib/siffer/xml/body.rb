@@ -1,30 +1,35 @@
 module Siffer
   module Xml
-     class MandatoryError < Exception
-        def initialize(element,klass)
-          @element = element
-          @klass = klass
-        end
-        def message
-          "#{@element.to_s.camelize} is mandatory for #{@klass}."
-        end
+    
+    class MandatoryError < Exception
+      def initialize(element,klass)
+        @element = element
+        @klass = klass
       end
+      def message
+        "#{@element.to_s.camelize} is mandatory for #{@klass}."
+      end
+    end
 
-      class ConditionalError < Exception
-        def initialize(element,conditions,klass)
-          @element = element
-          @klass = klass
-          @conditions = conditions
-        end
-        def message
-          if @conditions.is_a?(Hash)
-            "#{@element.to_s.camelize} is mandatory for #{@klass} if #{@conditions.keys.first.to_s.camelize} equals #{@conditions.values.first}"
-          else
-            @conditions = @conditions.delete_if{|c| c.is_a?(Hash)}
-            "#{@element.to_s.camelize} is mandatory for #{@klass} if #{@conditions.map{|c| c.to_s.camelize}.join(" or ")} is missing"
-          end
+    class ConditionalError < Exception
+      def initialize(element,conditions,klass)
+        @element = element
+        @klass = klass
+        @conditions = conditions
+      end
+      def message
+        if @conditions.is_a?(Hash)
+          "#{@element.to_s.camelize} is mandatory for #{@klass} if #{@conditions.keys.first.to_s.camelize} equals #{@conditions.values.first}"
+        else
+          @conditions = @conditions.delete_if{|c| c.is_a?(Hash)}
+          "#{@element.to_s.camelize} is mandatory for #{@klass} if #{@conditions.map{|c| c.to_s.camelize}.join(" or ")} is missing"
         end
       end
+    end
+      
+    # A class that supports both the Element and Attribute models.
+    # Used as a base class for classes wanting to take advantage of
+    # a full Xml body.
     class Body
       include Element
       include Attribute
@@ -69,7 +74,7 @@ module Siffer
       private 
         # Writes the body of the XML document. Includes attributes for the class instance.
         def write_body(xml)
-          args = (class_attributes.nil?) ? element_name : [element_name, camelized_attributes]
+          args = (self.class.class_attributes.nil?) ? element_name : [element_name, camelized_attributes]
           xml.tag!(*args) { |body|
             values.each do |key, value|
               write_xml_element(body,key,value)           

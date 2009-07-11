@@ -1,22 +1,10 @@
 require File.join(File.dirname(__FILE__),"..", "lib","siffer")
 require 'spec'
 
-# Makes checking mandatory fields much easier.
-# 
-#  class Model < Siffer::Xml::Body
-#    element :name, :type => :mandatory
-#  end
-#
-#  describe Model do
-#    it "should require Name" do
-#      Model.should require(:name)
-#    end
-#  end
-#
 Spec::Matchers.define :require do |field|
   match do |obj|
     # get all declared elements
-    declared = obj.instance_variable_get("@declared_values")
+    declared = obj.declared_values
     # fill them all with value of 1
     filled = declared.inject({}){|acc,name| acc.merge(name => 1)}
     begin

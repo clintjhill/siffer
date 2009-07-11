@@ -9,8 +9,7 @@ describe Attribute do
       include Attribute
       attribute :something
     end
-    @attr = AttrAccess.new
-    @attr.class_attributes.should include(:something)
+    AttrAccess.class_attributes.should include(:something)
   end
   
   it "should camelize attributes except xmlns" do

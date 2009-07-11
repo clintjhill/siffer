@@ -7,10 +7,6 @@ module Siffer
       element :code, :type => :mandatory
       element :desc
       element :data
-      
-      def self.success(data = nil)
-        self.new(:code => 0, :desc => STATUS_CODE[0], :data => data)
-      end
     end
     
     # Element containing Error information

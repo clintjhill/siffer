@@ -4,31 +4,31 @@ module Siffer
       
       attr_reader :values
       
-      # Class instance array of declared values (elements)
-      # @return [Array]
-      def declared_values
-        declared = []
-        declared << self.class.instance_variable_get("@declared_values") unless self.class.instance_variable_get("@declared_values").nil?
-        declared.flatten
-      end
-      
-      # Class instance array of mandatory element names
-      # @return [Array]
-      def mandatory
-        mandated = []
-        mandated << self.class.instance_variable_get("@mandatory") unless self.class.instance_variable_get("@mandatory").nil?
-        mandated.flatten
-      end
-
-      # Class instance hash of conditional element names and their conditions
-      # @return [Hash]
-      def conditional
-        conditioned = {}
-        conditioned.update self.class.instance_variable_get("@conditional") unless self.class.instance_variable_get("@conditional").nil?
-        conditioned
-      end
-      
       module ClassMethods
+        
+        # Class instance array of declared values (elements)
+        # @return [Array]
+        def declared_values
+          declared = []
+          declared << @declared_values
+          declared.flatten
+        end
+        
+        # Class instance array of mandatory element names
+        # @return [Array]
+        def mandatory
+          mandated = []
+          mandated << @mandatory
+          mandated.flatten
+        end
+        
+        # Class instance hash of conditional element names and their conditions
+        # @return [Hash]
+        def conditional
+          conditioned = {}
+          conditioned.update @conditional
+          conditioned
+        end
         
         # Creates an element for the instance. Adds a getter/setter
         # and populates the mandatory and conditional
@@ -68,8 +68,8 @@ module Siffer
         # Writes the values to the instance.
         def write(values) 
           @values ||= {}
-          unless declared_values.empty?
-            declared_values.each do |name|
+          unless self.class.declared_values.empty?
+            self.class.declared_values.each do |name|
               if values.has_key?(name)
                 @values[name] = values[name]
               end
@@ -79,8 +79,8 @@ module Siffer
 
         # Validates the mandatory values are populated with a value.
         def check_mandatory(values)
-          unless mandatory.empty?
-            mandatory.each do |element|
+          unless self.class.mandatory.empty?
+            self.class.mandatory.each do |element|
               unless values.has_key?(element) && values[element]
                 raise MandatoryError.new(element,self.class)
               end
@@ -90,9 +90,9 @@ module Siffer
 
         # Validates the conditional values are populated with values.
         def check_conditional(values)
-          unless conditional.empty?
-            unless values.keys.any?{|v| conditional.has_key?(v) && values[v]}
-              conditional.each do |element, conditions|
+          unless self.class.conditional.empty?
+            unless values.keys.any?{|v| self.class.conditional.has_key?(v) && values[v]}
+              self.class.conditional.each do |element, conditions|
                 # for each condition (if its a hash) lets check values
                 conditions.each do |condition|
                   if condition.is_a?(Hash) and values.has_key?(condition.keys.first)

@@ -4,13 +4,20 @@ include Siffer::Xml
 
 describe Element do
   
+  it "should expose declared values" do
+    class DeclaredElement
+      include Element
+      element :declared
+    end
+    DeclaredElement.declared_values.should include(:declared)
+  end
+  
   it "should provide mandatory elements" do
     class MandatoryElement
       include Element
       element :mandy, :type => :mandatory
     end
-    @ele = MandatoryElement.new
-    @ele.mandatory.should include(:mandy)
+    MandatoryElement.mandatory.should include(:mandy)
   end
   
   it "should provide conditional elements" do
@@ -19,9 +26,8 @@ describe Element do
       element :option
       element :condition, :type => :conditional, :conditions => :option
     end
-    @cond = ConditionalElement.new
-    @cond.conditional.keys.should include(:condition)
-    @cond.conditional.values.should include(:option)
+    ConditionalElement.conditional.keys.should include(:condition)
+    ConditionalElement.conditional.values.should include(:option)
   end
   
   it "should build getter/setter for each element" do

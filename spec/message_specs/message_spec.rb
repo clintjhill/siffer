@@ -55,19 +55,17 @@ describe Message do
   
   it "should require Header when subclassed" do
     class Subbed < Message
-      element :doozy
+      element :doozy, :type => :mandatory
     end
     Subbed.should require(:header)
   end
   
   it "should have SIF version attribute" do
-    @message = Message.new(:source_id => "Test Source")
-    @message.class_attributes[:version].should == Siffer.sif_version
+    Message.class_attributes[:version].should == Siffer.sif_version
   end
   
   it "should have SIF xml namespace attribute" do
-    @message = Message.new(:source_id => "Test Source")
-    @message.class_attributes[:xmlns].should == Siffer.sif_xmlns
+    Message.class_attributes[:xmlns].should == Siffer.sif_xmlns
   end
       
 end
