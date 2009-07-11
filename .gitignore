@@ -1,6 +1,7 @@
 doc/rdoc
 doc/yardoc
 .yardoc
+.autotest
 coverage
 pkg
 spec/*.log
