@@ -18,7 +18,7 @@ module Siffer
         # @return [Array]
         def mandatory
           mandated = []
-          mandated << @mandatory
+          mandated << @mandatory unless @mandatory.nil?
           mandated.flatten
         end
         
@@ -26,7 +26,7 @@ module Siffer
         # @return [Hash]
         def conditional
           conditioned = {}
-          conditioned.update @conditional
+          conditioned.update @conditional unless @conditional.nil?
           conditioned
         end
         
@@ -93,17 +93,23 @@ module Siffer
           unless self.class.conditional.empty?
             unless values.keys.any?{|v| self.class.conditional.has_key?(v) && values[v]}
               self.class.conditional.each do |element, conditions|
+                
                 # for each condition (if its a hash) lets check values
                 conditions.each do |condition|
-                  if condition.is_a?(Hash) and values.has_key?(condition.keys.first)
-                    if values[condition.keys.first] == condition.values.first
-                      raise ConditionalError.new(element,condition,self.class)
+                  if condition.is_a?(Hash)
+                    condition.keys.each do |specified|
+                      # this captures the event that "specified" triggers and error when it matches 
+                      # a particular value such as:
+                      # Register should require Protocol when Mode == Push
+                      if values[specified] == condition[specified]
+                        raise ConditionalError.new(element,condition,self.class)
+                      end
                     end
                   end
                 end
                 
-                # if any of the conditions exist in the values then it's good
-                unless conditions.any?{|c| values.has_key?(c)}
+                # if all of the conditions exist in the values then it's good
+                unless conditions.all?{|c| values.has_key?(c)}
                   raise ConditionalError.new(element,conditions,self.class)
                 end
                 
@@ -121,6 +127,10 @@ module Siffer
         def write_xml_element(body,name,value)
           if value.is_a?(Element)
             body << value
+          elsif value.is_a?(Array)
+            value.each do |val|
+              body.tag!(element_name(name)){ |tag| tag << val.to_s }
+            end
           else
             body.tag!(element_name(name)){ |tag| tag << value.to_s }
           end

@@ -1,6 +1,8 @@
 module Siffer
   module Xml
     
+    # Thrown when a mandatory element is missing from a set of values
+    #@see Body
     class MandatoryError < Exception
       def initialize(element,klass)
         @element = element
@@ -10,7 +12,9 @@ module Siffer
         "#{@element.to_s.camelize} is mandatory for #{@klass}."
       end
     end
-
+    
+    # Thrown when a conditional element is missing or a conditional value is met
+    #@see Body
     class ConditionalError < Exception
       def initialize(element,conditions,klass)
         @element = element
@@ -75,11 +79,15 @@ module Siffer
         # Writes the body of the XML document. Includes attributes for the class instance.
         def write_body(xml)
           args = (self.class.class_attributes.nil?) ? element_name : [element_name, camelized_attributes]
-          xml.tag!(*args) { |body|
-            values.each do |key, value|
-              write_xml_element(body,key,value)           
-            end 
-          }
+          if values.empty? 
+            xml.tag!(*args) # just write xml closed tag
+          else
+            xml.tag!(*args) { |body|
+              values.each do |key, value|
+                write_xml_element(body,key,value)           
+              end 
+            }
+          end
         end
 
     end

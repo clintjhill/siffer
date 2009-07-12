@@ -39,5 +39,5 @@ describe Element do
     @get_set.should respond_to(:element)
     @get_set.should respond_to(:element=)
   end
-  
+    
 end

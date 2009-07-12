@@ -58,6 +58,11 @@ module Siffer
     #@see Event
     #@see Provide
     #@see Provision
+    #@see Register
+    #@see Request
+    #@see Response
+    #@see Subscribe
+    #@see SystemControl
     class Message < SifXml
       attribute :xmlns, Siffer.sif_xmlns
       attribute :version, Siffer.sif_version
@@ -75,7 +80,9 @@ module Siffer
         def declared_values
           declared = super
           if subclass_of_message
-            declared << superclass.instance_variable_get("@declared_values")
+            unless superclass.instance_variable_get("@declared_values").nil?
+              declared << superclass.instance_variable_get("@declared_values")
+            end
           end
           declared.flatten
         end
@@ -83,7 +90,9 @@ module Siffer
         def mandatory
           mandated = super
           if subclass_of_message
-            mandated << superclass.instance_variable_get("@mandatory")
+            unless superclass.instance_variable_get("@mandatory").nil?
+              mandated << superclass.instance_variable_get("@mandatory") || []
+            end 
           end
           mandated.flatten
         end
@@ -91,7 +100,9 @@ module Siffer
         def conditional
           conditioned = super
           if subclass_of_message
-            conditioned.update superclass.instance_variable_get("@conditional")
+            unless superclass.instance_variable_get("@conditional").nil?
+              conditioned.update superclass.instance_variable_get("@conditional") 
+            end
           end
           conditioned
         end

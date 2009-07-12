@@ -34,6 +34,50 @@ describe Query do
   
 end
 
+describe JoinOn do
+  
+  it "should require LeftElement" do
+    JoinOn.should require(:left_element)
+  end
+  
+  it "should require RightElement" do
+    JoinOn.should require(:right_element)
+  end
+  
+end
+
+describe Where do
+  
+  it "should require condition group" do
+    Where.should require(:condition_group)
+  end
+  
+end
+
+describe Select do
+  
+  it "should require element" do
+    Select.should require(:element)
+  end
+  
+end
+
+describe ExtendedQuery do
+  
+  it "should require select" do
+    ExtendedQuery.should require(:select)
+  end
+  
+  it "should require from" do
+    ExtendedQuery.should require(:from)
+  end
+  
+  it "should require where" do
+    ExtendedQuery.should require(:where)
+  end
+  
+end
+
 describe Request do
   
   it "should require a version" do

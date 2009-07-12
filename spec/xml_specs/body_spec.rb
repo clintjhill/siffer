@@ -11,7 +11,7 @@ describe Body do
   
   it "should quack like string for equality tests" do
     @duck = Duck.new(:beek => "orange", :wings => ["one","two"])
-    @duck.should eql("<Duck Beek=\"orange\"><Wings>onetwo</Wings></Duck>")
+    @duck.should eql("<Duck Beek=\"orange\"><Wings>one</Wings><Wings>two</Wings></Duck>")
   end
   
   it "should expose proper Element name" do
@@ -23,5 +23,14 @@ describe Body do
     @duck = Duck.new
     @duck.should match(/<Duck Beek=/)
   end
+  
+  it "should nest inner list of elements if repeated" do
+    class Repeater < Body
+      element :repeated
+    end
+    @repeat = Repeater.new(:repeated => ["1", "2", "3"])
+    puts @repeat
+  end
+  
   
 end
