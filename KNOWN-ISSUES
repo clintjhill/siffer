@@ -1,3 +1,8 @@
 = Known issues with Siffer
 
-* Not done
+* Data Model incomplete
+* Common Types incomplete
+* Agents missing
+* ZIS missing
+* command line tools missing
+* Web based Admin missing

@@ -11,7 +11,7 @@ module Siffer
     
     # Message Element that holds the data object that is add/change/delete
     #@see Event
-    class EventObject < Siffer::Xml::Body
+    class EventObject < SifXml
       attribute :object_name
       attribute :action
     end

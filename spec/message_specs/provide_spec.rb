@@ -9,3 +9,11 @@ describe Provide do
   end
   
 end
+
+describe UnProvide do
+  
+  it "should require an object" do
+    UnProvide.should require(:object)
+  end
+  
+end

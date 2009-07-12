@@ -3,7 +3,7 @@ module Siffer
     
     # Element containing Status information
     #@see Ack
-    class Status < Siffer::Xml::Body
+    class Status < SifXml
       element :code, :type => :mandatory
       element :desc
       element :data
@@ -11,7 +11,7 @@ module Siffer
     
     # Element containing Error information
     #@see Ack
-    class Error < Siffer::Xml::Body
+    class Error < SifXml
       element :category, :type => :mandatory
       element :code, :type => :mandatory
       element :desc, :type => :mandatory

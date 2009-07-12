@@ -41,5 +41,9 @@ module Siffer
       element :icon
     end
     
+    # This message allows an agent to remove any association it has with the ZIS.
+    #@see Register
+    class Unregister < Message; end
+    
   end
 end

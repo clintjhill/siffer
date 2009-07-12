@@ -9,3 +9,11 @@ describe Subscribe do
   end
   
 end
+
+describe Unsubscribe do
+  
+  it "should require object" do
+    Subscribe.should require(:object)
+  end
+  
+end

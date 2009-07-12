@@ -1,6 +1,8 @@
 module Siffer
   module Messages
     
+    # This message allows an agent to announce to the ZIS the functionality the agent will provide.
+    #@see Object
     class Provision < Message
       element :provide_objects, :type => :mandatory
       element :subscribe_objects, :type => :mandatory

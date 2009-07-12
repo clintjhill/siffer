@@ -41,3 +41,11 @@ describe Register do
   end
   
 end
+
+describe Unregister do
+  
+  it "should be empty" do
+    Unregister.new(:source_id => "Test").should match(/<SIF_Unregister><SIF_Header>.*<\/SIF_Header><\/SIF_Unregister>/)
+  end
+  
+end
