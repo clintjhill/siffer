@@ -3,12 +3,15 @@ require 'activesupport'
 require 'uuid'
 require 'builder'
 
+I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true unless defined?(I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2)
+require 'nokogiri'
+
 $: << File.expand_path(File.dirname(__FILE__))
 
 module Siffer
 
     VENDOR = "h3o(software)" unless defined?(Siffer::VENDOR)
-    VERSION = [0,0,6] unless defined?(Siffer::VERSION)
+    VERSION = [0,0,7] unless defined?(Siffer::VERSION)
     SIF_VERSION = [2,3,0] unless defined?(Siffer::SIF_VERSION)
     SIF_XMLNS = "http://www.sifinfo.org/infrastructure/2.x" unless defined?(Siffer::SIF_XMLNS)
   

@@ -34,6 +34,13 @@ module Siffer
     class Conditions < SifXml
       attribute :type, CONDITION_GROUP_TYPES[:none]
       element :condition, :type => :mandatory
+      
+      def initialize(vals = {})
+        if vals.has_key?(:condition) and vals[:condition].is_a?(Array)
+          vals[:condition] = vals[:condition].inject([]) {|acc,hash| acc << Condition.new(hash)}
+        end
+        super(vals)
+      end
     end
     
     # Represents a group conditions that the queried objects must meet.
@@ -41,6 +48,13 @@ module Siffer
     class ConditionGroup < SifXml
       attribute :type, CONDITION_GROUP_TYPES[:none]
       element :conditions, :type => :mandatory
+      
+      def initialize(vals = {})
+        if vals.has_key?(:conditions) and vals[:conditions].is_a?(Hash)
+          vals[:conditions] = Conditions.new(vals[:conditions])
+        end
+        super(vals)
+      end
     end
     
     # The object that is being queried for
@@ -54,6 +68,16 @@ module Siffer
       element :query_object, :type => :mandatory
       element :condition_group, :type => :conditional, :conditions => [:example]
       element :example, :type => :conditional, :conditions => [:condition_group]
+      
+      def initialize(vals = {})
+        if vals.has_key?(:query_object) and vals[:query_object].is_a?(Hash)
+          vals[:query_object] = QueryObject.new(vals[:query_object])
+        end
+        if vals.has_key?(:condition_group) and vals[:condition_group].is_a?(Hash)
+          vals[:condition_group] = ConditionGroup.new(vals[:condition_group])
+        end
+        super(vals)
+      end
     end
     
     # Element used in Select to identify the element/attribute
@@ -132,6 +156,13 @@ module Siffer
       element :max_buffer_size, :type => :mandatory
       element :query, :type => :conditional, :conditions => [:extended_query]
       element :extended_query, :type => :conditional, :conditions => [:query]
+      
+      def initialize(vals = {})
+        if vals.has_key?(:query) and vals[:query].is_a?(Hash)
+          vals[:query] = Query.new(vals[:query])
+        end
+        super(vals)
+      end
     end
     
   end

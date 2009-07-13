@@ -13,6 +13,13 @@ module Siffer
     #@see Object
     class Provide < Message
       element :object, :type => :mandatory
+      
+      def initialize(vals = {})
+        if vals.has_key?(:object) and vals[:object].is_a?(Array)
+          vals[:object] = vals[:object].inject([]) {|acc,hash| acc << Object.new(hash)}
+        end
+        super(vals)
+      end
     end
     
     # This message performs the opposite function of SIF_Provide.

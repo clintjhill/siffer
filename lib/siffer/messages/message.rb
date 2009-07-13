@@ -1,5 +1,3 @@
-require 'nokogiri'
-
 module Siffer
   module Messages
     
@@ -44,7 +42,7 @@ module Siffer
       def initialize(values ={})
         super({:source_id => values[:source_id], 
               :msg_id => values[:msg_id] || UUID.generate(:compact).upcase,
-              :timestamp => Time.now,
+              :timestamp => values[:timestamp] || Time.now,
               :security => create_security(values),
               :destionation_id => values[:destination_id],
               :contexts => values[:contexts]})

@@ -1,5 +1,3 @@
-require 'nokogiri'
-
 module Siffer
   module Xml
     module Element
@@ -66,6 +64,7 @@ module Siffer
           xml.children.inject({}) do |acc, child|
             child_name = child.name.gsub(/SIF_/,'')
             if child.children.size >= 1
+              # if there is only 1 child and it's a text
               if child.children.size == 1 and child.child.text?
                 # If the child is repeated, turn into an array of values
                 # otherwise it will simply overwrite previous values
@@ -78,10 +77,28 @@ module Siffer
                   acc.update(child_name => child.child.text)
                 end
               else
-                acc.update(child_name => parse_element(child))
+                if acc.has_key?(child_name)
+                  arry_val = []
+                  arry_val << acc[child_name].recursively_underscore
+                  arry_val << parse_element(child).recursively_underscore
+                  acc.update(child_name => arry_val.flatten)
+                else
+                  acc.update(child_name => parse_element(child))
+                end
               end
             else
-              acc.update(child_name => child.text)
+              # The child has no children - which means no text
+              # If the child is repeated, turn into an array of values
+              # otherwise it will simply overwrite previous values  
+              child.attributes.recursively_underscore            
+              if acc.has_key?(child_name)
+                arry_val = []
+                arry_val << acc[child_name]
+                arry_val << child.attributes
+                acc.update(child_name => arry_val.flatten)
+              else  
+                acc.update(child_name => child.attributes)
+              end
             end
           end
         end
