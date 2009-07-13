@@ -29,8 +29,6 @@ describe Body do
       element :repeated
     end
     @repeat = Repeater.new(:repeated => ["1", "2", "3"])
-    puts @repeat
   end
-  
   
 end

@@ -41,6 +41,13 @@ module Siffer
     class CancelRequests < SifXml 
       element :notification_type, :type => :mandatory
       element :request_msg_ids, :type => :mandatory
+      
+      def initialize(values = {})
+        if values.has_key?(:request_msg_ids) and values[:request_msg_ids].is_a?(Hash)
+          values[:request_msg_ids] = RequestMsgIds.new(values[:request_msg_ids])
+        end
+        super(values)
+      end
     end
     
     
@@ -48,36 +55,47 @@ module Siffer
     class SystemControl < Message
       element :system_control_data, :type => :mandatory
       
+      def initialize(values = {})
+        values[:system_control_data] = Ping.new if values.has_key?(:ping)
+        values[:system_control_data] = Sleep.new if values.has_key?(:sleep)
+        values[:system_control_data] = Wakeup.new if values.has_key?(:wakeup)
+        values[:system_control_data] = GetMessage.new if values.has_key?(:get_message)
+        values[:system_control_data] = GetZoneStatus.new if values.has_key?(:get_zone_status)
+        values[:system_control_data] = GetAgentACL.new if values.has_key?(:get_agent_acl)
+        values[:system_control_data] = CancelRequests.new(values[:cancel_requests]) if values.has_key?(:cancel_requests)
+        super(values)
+      end
+      
       class << self
         
         # Returns a SIF_Ping
         def ping(source)
-          SystemControl.new(:source_id => source, :system_control_data => Ping.new)
+          SystemControl.new(:header => source, :system_control_data => Ping.new)
         end
         
         # Returns a SIF_Sleep
         def sleep(source)
-          SystemControl.new(:source_id => source, :system_control_data => Sleep.new)
+          SystemControl.new(:header => source, :system_control_data => Sleep.new)
         end
         
         # Returns a SIF_Wakeup
         def wake_up(source)
-          SystemControl.new(:source_id => source, :system_control_data => Wakeup.new)
+          SystemControl.new(:header => source, :system_control_data => Wakeup.new)
         end
         
         # Returns a SIF_GetMessage
         def get_message(source)
-          SystemControl.new(:source_id => source, :system_control_data => GetMessage.new)
+          SystemControl.new(:header => source, :system_control_data => GetMessage.new)
         end
         
         # Returns a SIF_GetZoneStatus
         def get_zone_status(source)
-          SystemControl.new(:source_id => source, :system_control_data => GetZoneStatus.new)
+          SystemControl.new(:header => source, :system_control_data => GetZoneStatus.new)
         end
         
         # Returns a SIF_GetAgentACL
         def get_agent_acl(source)
-          SystemControl.new(:source_id => source, :system_control_data => GetAgentACL.new)
+          SystemControl.new(:header => source, :system_control_data => GetAgentACL.new)
         end
         
         # Returns a SIF_CancelRequest
@@ -85,7 +103,7 @@ module Siffer
           cancel = CancelRequests.new(
                   :notification_type => notification, 
                   :request_msg_ids => RequestMsgIds.new(:request_msg_id => ids))
-          SystemControl.new(:source_id => source, :system_control_data => cancel)
+          SystemControl.new(:header => source, :system_control_data => cancel)
         end
       end
     end

@@ -45,7 +45,7 @@ describe Ack do
   end
   
   it "should be nested in message" do
-    @ack = Ack.new(:source_id => "Test Ack", :original_source_id => "11111", :original_msg_id => "22222", :status => "good")
+    @ack = Ack.new(:header => "Test Ack", :original_source_id => "11111", :original_msg_id => "22222", :status => "good")
     @ack.should match(/^<SIF_Message/)
     @ack.should match(/<\/SIF_Message>$/)
   end

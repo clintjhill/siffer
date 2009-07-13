@@ -39,5 +39,25 @@ describe Element do
     @get_set.should respond_to(:element)
     @get_set.should respond_to(:element=)
   end
+  
+  it "should parse XML and return hash values" do
+    class XmlParser
+      include Element
+    end
+    xml = Nokogiri::XML::Document.parse("<Some><Weird>value</Weird></Some>")
+    hash = XmlParser.parse_element(xml)
+    hash.should have_key("Some")
+    hash["Some"].should have_key("Weird")
+    hash["Some"]["Weird"].should eql("value")
+  end
+  
+  it "should parse repeated values into arrays" do
+    class RepeatedXml
+      include Element
+    end
+    xml = Nokogiri::XML::Document.parse("<Repeated><Value>1</Value><Value>2</Value></Repeated>")
+    hash = RepeatedXml.parse_element(xml)
+    hash["Repeated"]["Value"].should be_instance_of(Array)
+  end
     
 end

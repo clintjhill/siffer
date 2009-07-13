@@ -70,6 +70,12 @@ module Siffer
         write_body(xml)
         xml.target!
       end
+      
+      # Allows access to XML for checking on length
+      # ??? Added to allow easier calls to Nokogiri
+      def empty?
+        to_xml.empty?
+      end
 
       alias :to_str :to_xml
       alias :to_s :to_xml 

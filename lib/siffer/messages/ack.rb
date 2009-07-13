@@ -27,6 +27,16 @@ module Siffer
       element :original_msg_id, :type => :mandatory
       element :status, :type => :conditional, :conditions => [:error]
       element :error, :type => :conditional, :conditions => [:status]
+      
+      def initialize(values = {})
+        if values.has_key?(:status) and values[:status].is_a?(Hash)
+          values[:status] = Status.new(values[:status])
+        end
+        if values.has_key?(:error) and values[:error].is_a?(Hash)
+          values[:error] = Error.new(values[:error])
+        end
+        super(values)
+      end
     end
     
     STATUS_CODE = {

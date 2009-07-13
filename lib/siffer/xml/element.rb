@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 module Siffer
   module Xml
     module Element
@@ -57,6 +59,32 @@ module Siffer
           @mandatory << name if options[:type] == :mandatory
           @conditional[name] = options[:conditions] if options[:type] == :conditional
         end
+        
+        # Returns a hash with all elements and values set from the parsed XML
+        #@returns Hash
+        def parse_element(xml)
+          xml.children.inject({}) do |acc, child|
+            child_name = child.name.gsub(/SIF_/,'')
+            if child.children.size >= 1
+              if child.children.size == 1 and child.child.text?
+                # If the child is repeated, turn into an array of values
+                # otherwise it will simply overwrite previous values
+                if acc.has_key?(child_name)
+                  arry_val = []
+                  arry_val << acc[child_name]
+                  arry_val << child.child.text
+                  acc.update(child_name => arry_val.flatten)
+                else
+                  acc.update(child_name => child.child.text)
+                end
+              else
+                acc.update(child_name => parse_element(child))
+              end
+            else
+              acc.update(child_name => child.text)
+            end
+          end
+        end
 
       end
       
@@ -65,6 +93,7 @@ module Siffer
       end
       
       private
+        
         # Writes the values to the instance.
         def write(values) 
           @values ||= {}

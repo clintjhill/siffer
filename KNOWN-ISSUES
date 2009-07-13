@@ -6,3 +6,4 @@
 * ZIS missing
 * command line tools missing
 * Web based Admin missing
+* SIF VERSION validation missing (see Message.parse)

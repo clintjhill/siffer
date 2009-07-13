@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 module Siffer
   module Messages
     
@@ -40,17 +42,27 @@ module Siffer
       
       # Overloaded to provide defaults for Security, MsgId and Timestamp
       def initialize(values ={})
-        if values.keys.include?(:authentication_level) and values.keys.include?(:encryption_level)
-          secure_channel = SecureChannel.new(values)
-        else
-          secure_channel = SecureChannel.new(:authentication_level => 0, :encryption_level => 0)
-        end
-        security = Security.new(:secure_channel => secure_channel)
         super({:source_id => values[:source_id], 
-              :msg_id => UUID.generate(:compact).upcase,
+              :msg_id => values[:msg_id] || UUID.generate(:compact).upcase,
               :timestamp => Time.now,
-              :security => security}.merge(values))
+              :security => create_security(values),
+              :destionation_id => values[:destination_id],
+              :contexts => values[:contexts]})
       end
+      
+      private
+      
+        def create_security(values)
+          values = values[:security] unless values[:security].nil?
+          values = values[:secure_channel] if values.is_a?(Hash) and values.has_key?(:secure_channel)
+          if values.is_a?(Hash) and values.has_key?(:authentication_level) and values.has_key?(:encryption_level)
+            secure_channel = SecureChannel.new(values)
+          else
+            secure_channel = SecureChannel.new(:authentication_level => 0, :encryption_level => 0)
+          end          
+          Security.new(:secure_channel => secure_channel)
+        end
+        
     end
     
     # Base Message for all SIF_Message types
@@ -68,10 +80,12 @@ module Siffer
       attribute :version, Siffer.sif_version
       element :header, :type => :mandatory
       
-      # Inspects values for :source_id and if exists injects new Header
+      # Inspects values for :header and if exists injects new Header
       def initialize(values = {})
-        if values.keys.include?(:source_id)
-          values[:header] = Header.new(values)
+        if values[:header].is_a?(Hash) and values.keys.include?(:header) 
+          values[:header] = Header.new(values[:header])
+        else
+          values[:header] = Header.new(:source_id => values[:header])
         end
         super(values)
       end
@@ -110,6 +124,30 @@ module Siffer
         # Returns true if this instance is not a Message and its parent class is a Message.
         def subclass_of_message
           !instance_of?(Message) && superclass == Message
+        end
+        
+        # Parses raw XML and initializes proper Message
+        def parse(document)
+          doc = Nokogiri::XML::Document.parse(document)  
+          if doc.xml? and doc.to_s.include?("SIF_")
+            # grab the version for validation later
+            version = doc.children.first.attributes["Version"]
+            # use the first child's children (the first child is the SIF_Message)
+            values = doc.children.first.children.inject({}) do |acc, subchild|
+              prop_name = subchild.name.gsub(/SIF_/,"")
+              if acc.has_key?(prop_name)
+                acc += parse_element(subchild)
+              else
+                acc.update(prop_name => parse_element(subchild))
+              end
+            end
+            klass = values.keys.first.constantize
+            values.recursively_underscore
+            props = values[values.keys.first]
+            return klass.new(props)
+          end
+          #TODO: VERSION XMLNS VALIDATIONS
+          nil # or possibly some other form of version validation ??
         end
       end
       

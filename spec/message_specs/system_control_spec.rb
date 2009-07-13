@@ -33,7 +33,7 @@ describe SystemControl do
   end
   
   it "should provide cancel requests message" do
-    puts SystemControl.cancel_requests("Test", NOTIFICATION_TYPES[:standard], "111111","2222222","333333")
+    SystemControl.cancel_requests("Test", NOTIFICATION_TYPES[:standard], "111111","2222222","333333").should match(/<SIF_CancelRequests>/)
   end
   
 end

@@ -67,7 +67,18 @@ describe Message do
   it "should have SIF xml namespace attribute" do
     Message.class_attributes[:xmlns].should == Siffer.sif_xmlns
   end
-      
+  
+  it "should parse XML" do
+    xml = Ack.new(:header => "Test Ack", :original_source_id => "Original Msg", :original_msg_id => "12345ABCDE", :status => Status.new(:code => 0))
+    body = Message.parse(xml)
+    body.should be_instance_of(Ack)
+    body.header.msg_id.should eql(xml.header.msg_id) # real parsing - not recreation
+    xml = SystemControl.cancel_requests("test cancel", NOTIFICATION_TYPES[:none], "1111","2222","3333")
+    body = Message.parse(xml)
+    body.should be_instance_of(SystemControl)
+    body.system_control_data.should be_instance_of(CancelRequests) #assure nested instances
+  end
+  
 end
 
 describe Contexts do
