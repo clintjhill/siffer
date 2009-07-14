@@ -43,6 +43,7 @@ module Siffer
       element :request_msg_ids, :type => :mandatory
       
       def initialize(values = {})
+        values = values[:cancel_requests] if values.has_key?(:cancel_requests)
         if values.has_key?(:request_msg_ids) and values[:request_msg_ids].is_a?(Hash)
           values[:request_msg_ids] = RequestMsgIds.new(values[:request_msg_ids])
         end

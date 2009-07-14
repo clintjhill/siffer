@@ -16,14 +16,17 @@ spec = Gem::Specification.new do |s|
   s.email = "clint.hill@h3osoftware.com"
   s.homepage = "http://h3osoftware.com/siffer"
   s.summary = "Siffer - School Interoperability Framework by h3o(software)"
+  s.description = <<-EOF
+    Siffer is a SIF that plans to remove the complexity from the implementation.
+    Siffer is SIF done easy. It's also the first entirely done in Ruby!
+  EOF
   s.rubyforge_project = "siffer"
   s.require_path = "lib"
   s.files        = %w( LICENSE README Rakefile ) + Dir["{spec,lib,doc}/**/*"]
-  # s.bindir = "bin"
-  # s.executables = %w( siffer )
   s.add_dependency "uuid"
   s.add_dependency "activesupport"
   s.add_dependency "builder"
+  s.add_dependency "nokogiri"
 end
 
 Rake::GemPackageTask.new(spec) do |package|

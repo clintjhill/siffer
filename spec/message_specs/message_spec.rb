@@ -82,6 +82,16 @@ describe Message do
     body.system_control_data.should be_instance_of(CancelRequests) #assure nested instances
   end
   
+  it "should parse raw SIF Spec Ack example" do
+    #example lifted from SIF Spec 2.3 Example 5.2.1-1: SIF_Ack
+    xml = "<SIF_Message Version=\"2.3\" xmlns=\"http://www.sifinfo.org/infrastructure/2.x\"><SIF_Ack><SIF_Header><SIF_MsgId>AB1058CD3261545A31905937B265CE01</SIF_MsgId><SIF_Timestamp>2006-02-18T08:39:40-08:00</SIF_Timestamp><SIF_SourceId>SifInfo_TestZIS</SIF_SourceId></SIF_Header><SIF_OriginalSourceId>RamseyLib</SIF_OriginalSourceId><SIF_OriginalMsgId>1298ACEF3261545A31905937B265CE01</SIF_OriginalMsgId><SIF_Status><SIF_Code>0</SIF_Code><SIF_Data><SIF_Message Version=\"2.3\"><SIF_Request><SIF_Header><SIF_MsgId>A3E90785EFDA330DACB00785EFDA330D</SIF_MsgId><SIF_Timestamp>2006-02-18T08:39:02-08:00</SIF_Timestamp><SIF_SourceId>RamseySIS</SIF_SourceId></SIF_Header><SIF_Version>2.*</SIF_Version><SIF_MaxBufferSize>1048576</SIF_MaxBufferSize><SIF_Query><SIF_QueryObject ObjectName=\"LibraryPatronStatus\" /><SIF_ConditionGroup Type=\"None\"><SIF_Conditions Type=\"None\"><SIF_Condition><SIF_Element>@SIF_RefObject</SIF_Element><SIF_Operator>EQ</SIF_Operator><SIF_Value>StaffPersonal</SIF_Value></SIF_Condition></SIF_Conditions></SIF_ConditionGroup></SIF_Query></SIF_Request></SIF_Message></SIF_Data></SIF_Status></SIF_Ack></SIF_Message>"
+    body = Message.parse(xml)
+    body.should be_instance_of(Ack)
+    body.status.code.should eql("0")
+    # This sucks ... need better way to recurse messages
+    body.status.data.data.should be_instance_of(Request)
+  end
+  
   it "should parse raw SIF Spec Provide example" do
     # example lifted from SIF Spec 2.3 Example 5.2.3-1: SIF_Provide
     xml = "<SIF_Message Version=\"2.3\" xmlns=\"http://www.sifinfo.org/infrastructure/2.x\"><SIF_Provide><SIF_Header><SIF_MsgId>34DC87FE3261545A31905937B265CE01</SIF_MsgId><SIF_Timestamp>2006-02-18T20:39:12-08:00</SIF_Timestamp><SIF_SourceId>RamseySIS</SIF_SourceId></SIF_Header><SIF_Object ObjectName=\"StudentPersonal\" /><SIF_Object ObjectName=\"StudentSchoolEnrollment\" /></SIF_Provide></SIF_Message>"

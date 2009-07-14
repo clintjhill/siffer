@@ -40,6 +40,7 @@ module Siffer
       
       # Overloaded to provide defaults for Security, MsgId and Timestamp
       def initialize(values ={})
+        values = values[:header] if values.has_key?(:header)
         super({:source_id => values[:source_id], 
               :msg_id => values[:msg_id] || UUID.generate(:compact).upcase,
               :timestamp => values[:timestamp] || Time.now,
@@ -133,11 +134,7 @@ module Siffer
             # use the first child's children (the first child is the SIF_Message)
             values = doc.children.first.children.inject({}) do |acc, subchild|
               prop_name = subchild.name.gsub(/SIF_/,"")
-              if acc.has_key?(prop_name)
-                acc += parse_element(subchild)
-              else
-                acc.update(prop_name => parse_element(subchild))
-              end
+              acc.update(prop_name => parse_element(subchild))
             end
             klass = values.keys.first.constantize
             values.recursively_underscore

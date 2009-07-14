@@ -1,12 +1,32 @@
 module Siffer
   module Messages
     
+    #@see Status
+    class Data < SifXml
+      element :data, :type => :mandatory
+      def initialize(vals = {})
+        klass = vals[:message].keys.first.to_s.capitalize.constantize
+        vals[:data] = klass.new(vals[:message][vals[:message].keys.first])
+        super(vals)
+      end
+      
+    end
     # Element containing Status information
     #@see Ack
     class Status < SifXml
       element :code, :type => :mandatory
       element :desc
       element :data
+      
+      def initialize(vals = {})
+        vals = vals[:status] if vals.has_key?(:status)
+        if vals.has_key?(:data) and vals[:data].is_a?(Hash)
+          vals[:data] = Data.new(vals[:data])
+          # klass = vals[:data][:message].keys.first.to_s.capitalize.constantize
+          # vals[:data] = klass.new(vals[:data][:message][vals[:data][:message].keys.first])
+        end
+        super(vals)
+      end
     end
     
     # Element containing Error information

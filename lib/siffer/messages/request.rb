@@ -38,6 +38,8 @@ module Siffer
       def initialize(vals = {})
         if vals.has_key?(:condition) and vals[:condition].is_a?(Array)
           vals[:condition] = vals[:condition].inject([]) {|acc,hash| acc << Condition.new(hash)}
+        else
+          vals[:condition] = Condition.new(vals[:condition]) unless vals.empty?
         end
         super(vals)
       end
