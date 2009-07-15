@@ -32,8 +32,7 @@ module Siffer
     end
       
     # A class that supports both the Element and Attribute models.
-    # Used as a base class for classes wanting to take advantage of
-    # a full Xml body.
+    # Used as a base class for classes wanting to take advantage of a full Xml body.
     class Body
       include Element
       include Attribute
@@ -50,16 +49,15 @@ module Siffer
       end
      
       # Overridden to assure comparison is done by string.
-      # Uses the MessageElement#to_xml call to compare with the #to_s call
-      # of the other object.
-      # @see MessageElement#to_xml
+      # Uses the #to_xml call to compare with the #to_s call of the other object.
+      # @see #to_xml
       def eql?(other)
         to_xml == other.to_s
       end
       
       # Overridden to assure match occurs on string.
-      # Uses the MessageElement#to_xml call to match against pattern.
-      # @see MessageElement#to_xml
+      # Uses the #to_xml call to match against pattern.
+      # @see #to_xml
       def match(pattern)
         to_xml.match(pattern)
       end
@@ -71,7 +69,7 @@ module Siffer
         xml.target!
       end
       
-      # Allows access to XML for checking on length
+      # Delegates to XML for checking
       # ??? Added to allow easier calls to Nokogiri
       def empty?
         to_xml.empty?

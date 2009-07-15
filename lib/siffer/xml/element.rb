@@ -59,7 +59,7 @@ module Siffer
         end
         
         # Returns a hash with all elements and values set from the parsed XML
-        #@returns Hash
+        #@return Hash
         def parse_element(xml)
           xml.children.inject({}) do |acc, child|
             child_name = child.name.gsub(/SIF_/,'')
@@ -164,12 +164,14 @@ module Siffer
           end
         end
         
+        # Returns the name of this element and then camelized in the event
+        # the name passed is not a class name.
+        # Default name is self.class
         def element_name(name = self.class)
           name.to_s.split("::").last.camelize
         end
         
-        # Writes the data to the XML either as a tag with a value
-        # or as a whole MessageElement.
+        # Writes the data to the XML either as a tag with a value or as a whole MessageElement.
         def write_xml_element(body,name,value)
           if value.is_a?(Element)
             body << value

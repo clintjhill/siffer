@@ -1,6 +1,9 @@
 module Siffer
   module Messages
     
+    # Raised when parsing XML that is not SIF compliant
+    class NonSIFMessage < Exception; end
+    
     # This class is used as the base for all SIF common types.
     class SifXml < Siffer::Xml::Body
       private
@@ -81,7 +84,7 @@ module Siffer
       
       # Inspects values for :header and if exists injects new Header
       def initialize(values = {})
-        if values[:header].is_a?(Hash) and values.keys.include?(:header) 
+        if values.has_key?(:header) and values[:header].is_a?(Hash) 
           values[:header] = Header.new(values[:header])
         else
           values[:header] = Header.new(:source_id => values[:header])
@@ -128,21 +131,20 @@ module Siffer
         # Parses raw XML and initializes proper Message
         def parse(document)
           doc = Nokogiri::XML::Document.parse(document)  
-          if doc.xml? and doc.to_s.include?("SIF_")
-            # grab the version for validation later
-            version = doc.children.first.attributes["Version"]
-            # use the first child's children (the first child is the SIF_Message)
-            values = doc.children.first.children.inject({}) do |acc, subchild|
-              prop_name = subchild.name.gsub(/SIF_/,"")
-              acc.update(prop_name => parse_element(subchild))
-            end
-            klass = values.keys.first.constantize
-            values.recursively_underscore
-            props = values[values.keys.first]
-            return klass.new(props)
+          raise NonSIFMessage.new unless doc.xml? and doc.namespaces.values.include?(Siffer.sif_xmlns)
+          # grab the version for validation later
+          version = doc.children.first.attributes["Version"]
+           
+          # use the first child's children (the first child is the xml doctype)
+          values = doc.children.first.children.inject({}) do |acc, subchild|
+            prop_name = subchild.name.gsub(/SIF_/,"")
+            acc.update(prop_name => parse_element(subchild))
           end
-          #TODO: VERSION XMLNS VALIDATIONS
-          nil # or possibly some other form of version validation ??
+          
+          klass = values.keys.first.constantize
+          values.recursively_underscore
+          props = values[values.keys.first]
+          klass.new(props)
         end
       end
       
