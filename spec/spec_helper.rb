@@ -1,5 +1,7 @@
 require File.join(File.dirname(__FILE__),"..", "lib","siffer")
 require 'spec'
+require 'spec/interop/test'
+require 'rack/test'
 
 Spec::Matchers.define :require do |field|
   match do |obj|

@@ -25,9 +25,8 @@ through the URI and URL of ZIS and Agent components.
 
 == Implementation Information (sifinfo.org)
 
-This implementation is based on version 2.3 of the SIF Specification. The 
-Specification is in PDF format inside the doc folder.
-It can also be found here: http://specification.sifinfo.org/Implementation/2.3/
+This implementation is based on version 2.3 of the SIF Specification.
+It can be found here: http://specification.sifinfo.org/Implementation/2.3/
 
 More information here: http://sifinfo.org.
 

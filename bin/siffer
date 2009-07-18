@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.expand_path("#{__FILE__}/../../lib")
+require 'siffer'
+require 'optparse'
+
+env = "development"
+daemonize = false
+pid = File.join(Dir.getwd,"siffer.pid")
+pid_set = false
+options = {:port => 2828, :host => "0.0.0.0"}
+
+opts = OptionParser.new("", 24, '  ') { |opts|
+  opts.banner = "Usage: siffer [command: start|stop] [component: agent|server] [name] [options]"
+
+  opts.separator ""
+  opts.separator "Options:"
+
+  opts.on("-n", "--name NAME", "Name to use as identifier for Agent/Server") { |n|
+    name = n
+  }
+
+  opts.on("-o", "--host HOST", "listen on HOST (default: 0.0.0.0)") { |host|
+    options[:host] = host
+  }
+
+  opts.on("-p", "--port PORT", "use PORT (default: 2828)") { |port|
+    options[:port] = port
+  }
+
+  opts.on("-E", "--env ENVIRONMENT", "use ENVIRONMENT for defaults (default: development)") { |e|
+    env = e
+  }
+
+  opts.on("-D", "--daemonize", "run daemonized in the background") { |d|
+    daemonize = d ? true : false
+  }
+
+  opts.on("-P", "--pid FILE", "file to store PID (default: siffer.component.name.pid)") { |f|
+    pid = File.expand_path(f)
+    pid_set = true
+  }
+
+  opts.separator ""
+  opts.separator "Common options:"
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+
+  opts.on_tail("--version", "Show version") do
+    puts "Siffer: #{Siffer.version} -- SIF: #{Siffer.sif_version}"
+    exit
+  end
+
+  opts.parse! ARGV
+}
+
+command = ARGV[0]
+component = ARGV[1]
+component_name = ARGV[2]
+
+unless command && component && component_name
+  abort "Please supply the command, component and name to use. (i.e. siffer start agent \"Some Name\")"
+end
+
+unless pid_set
+  file_name = "siffer.#{component.downcase}.#{component_name.underscore}.pid"
+  pid = File.join(Dir.getwd,file_name)
+end
+
+if daemonize
+  if RUBY_VERSION < "1.9"
+    exit if fork
+    Process.setsid
+    exit if fork
+    Dir.chdir "/"
+    File.umask 0000
+    STDIN.reopen "/dev/null"
+    STDOUT.reopen "/dev/null", "a"
+    STDERR.reopen "/dev/null", "a"
+  else
+    Process.daemon
+  end
+
+  if pid
+    File.open(pid, 'w'){ |f| f.write("#{Process.pid}") } if command.downcase == "start"
+    at_exit { File.delete(pid) if File.exist?(pid) and command.downcase == "stop"}
+  end
+end
+
+if command.downcase == "start"
+  if component.downcase == "agent"
+    Siffer::Agent.set :port, options[:port]
+    Siffer::Agent.set :host, options[:host]
+    Siffer::Agent.set :agent_name, component_name
+    Siffer::Agent.run!
+  else # "server"
+    
+  end
+else # "stop"
+  if File.exist?(pid)
+    pid_num = open(pid).read.to_i
+    begin 
+      Process.kill("KILL",pid_num)
+    rescue Errno::ESRCH
+      abort "Siffer Process does not exist."
+    end
+    File.delete(pid)
+    "Siffer exited."
+  else
+    abort "Could not find Siffer component #{component_name}? Nothing to stop."
+  end
+end
