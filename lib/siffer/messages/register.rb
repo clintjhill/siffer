@@ -35,7 +35,7 @@ module Siffer
       element :version, :type => :mandatory
       element :max_buffer_size, :type => :mandatory
       element :mode, :type => :mandatory
-      element :protocol, :type => :conditional, :conditions => [:bogus,{:mode => "Push"}]
+      element :protocol, :type => :conditional, :conditions => {:mode => "Push"}
       element :node_vendor
       element :application
       element :icon

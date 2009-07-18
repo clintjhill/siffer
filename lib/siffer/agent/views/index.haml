@@ -1,1 +1,9 @@
-%h1= @agent_name
+- unless registered?
+  #register
+    %h2 You must Register with a ZIS!
+    %form{:action => "/register", :method => "post"}
+      %label Please provide a ZIS URL:
+      %br
+      %input{:type => "text", :name => "zis_url", :id => "zis_url"}
+      %br
+      %input{:type => "submit", :id => "register"}

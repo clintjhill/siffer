@@ -4,6 +4,7 @@ require 'uuid'
 require 'builder'
 require 'sinatra/base'
 require 'haml'
+require 'rest_client'
 
 I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2 = true unless defined?(I_KNOW_I_AM_USING_AN_OLD_AND_BUGGY_VERSION_OF_LIBXML2)
 require 'nokogiri'

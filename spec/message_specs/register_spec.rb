@@ -37,7 +37,7 @@ describe Register do
   end
   
   it "should conditionally require Protocol" do
-    Register.should conditionally_require(:protocol, :mode => "Push")
+    Register.should conditionally_require(:protocol, {:mode => "Push"})
   end
   
 end

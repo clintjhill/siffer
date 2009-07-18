@@ -74,6 +74,18 @@ module Siffer
       def empty?
         to_xml.empty?
       end
+      
+      # Delegates to XML for checking
+      # ??? Added to allow RESTClient to work
+      def size
+        to_xml.size
+      end
+      
+      # Delegates to XML for checking
+      # ??? Added to allow RESTClient to work
+      def length
+        to_xml.length
+      end
 
       alias :to_str :to_xml
       alias :to_s :to_xml 

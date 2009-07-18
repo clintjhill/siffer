@@ -140,25 +140,23 @@ module Siffer
             unless values.keys.any?{|v| self.class.conditional.has_key?(v) && values[v]}
               self.class.conditional.each do |element, conditions|
                 
-                # for each condition (if its a hash) lets check values
-                conditions.each do |condition|
-                  if condition.is_a?(Hash)
-                    condition.keys.each do |specified|
-                      # this captures the event that "specified" triggers and error when it matches 
-                      # a particular value such as:
-                      # Register should require Protocol when Mode == Push
-                      if values[specified] == condition[specified]
-                        raise ConditionalError.new(element,condition,self.class)
-                      end
+                # for each condition (if its a hash) lets check values     
+                if conditions.is_a?(Hash)
+                  conditions.keys.each do |specified|
+                    # this captures the event that "specified" triggers and error when it matches 
+                    # a particular value such as:
+                    # Register should require Protocol when Mode == Push
+                    if values[specified] == conditions[specified]
+                      raise ConditionalError.new(element,conditions,self.class)
                     end
                   end
                 end
                 
-                # if all of the conditions exist in the values then it's good
-                unless conditions.all?{|c| values.has_key?(c)}
+                # # if all of the conditions exist in the values then it's good
+                unless conditions.all?{|k,v| values.has_key?(k)}
                   raise ConditionalError.new(element,conditions,self.class)
                 end
-                
+                                
               end
             end
           end

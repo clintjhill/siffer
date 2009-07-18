@@ -5,4 +5,5 @@
     %meta{:'http-equiv' => "content-type", :content => "text/html; charset=utf-8"}
     %link{:rel => "stylesheet", :type => "text/css", :href => "/stylesheets/agent.css"}
   %body
-  = yield
+    %h1= @agent_name
+    = yield
