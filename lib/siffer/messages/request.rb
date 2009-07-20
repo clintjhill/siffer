@@ -68,8 +68,9 @@ module Siffer
     # SIF's default query mechanism
     class Query < SifXml
       element :query_object, :type => :mandatory
-      element :condition_group, :type => :conditional, :conditions => [:example]
-      element :example, :type => :conditional, :conditions => [:condition_group]
+      element :condition_group
+      element :example
+      must_have_one_of :condition_group, :example
       
       def initialize(vals = {})
         if vals.has_key?(:query_object) and vals[:query_object].is_a?(Hash)
@@ -156,8 +157,9 @@ module Siffer
     class Request < Message
       element :version, :type => :mandatory
       element :max_buffer_size, :type => :mandatory
-      element :query, :type => :conditional, :conditions => [:extended_query]
-      element :extended_query, :type => :conditional, :conditions => [:query]
+      element :query
+      element :extended_query
+      must_have_one_of :query,:extended_query
       
       def initialize(vals = {})
         if vals.has_key?(:query) and vals[:query].is_a?(Hash)

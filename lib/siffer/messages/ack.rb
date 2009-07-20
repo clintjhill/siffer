@@ -43,8 +43,9 @@ module Siffer
     class Ack < Message
       element :original_source_id, :type => :mandatory
       element :original_msg_id, :type => :mandatory
-      element :status, :type => :conditional, :conditions => [:error]
-      element :error, :type => :conditional, :conditions => [:status]
+      element :status
+      element :error
+      must_have_one_of :status, :error
       
       def initialize(values = {})
         if values.has_key?(:status) and values[:status].is_a?(Hash)

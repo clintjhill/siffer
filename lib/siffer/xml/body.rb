@@ -13,7 +13,7 @@ module Siffer
       end
     end
     
-    # Thrown when a conditional element is missing or a conditional value is met
+    # Thrown when a conditional value is met
     #@see Body
     class ConditionalError < Exception
       def initialize(element,conditions,klass)
@@ -30,7 +30,18 @@ module Siffer
         end
       end
     end
-      
+    
+    # Thrown when one of a set of conditions is missing
+    class MustHaveError < Exception
+      def initialize(conditions,klass)
+        @conditions = conditions
+        @klass = klass
+      end
+      def message
+        "#{@klass} must have one of #{@conditions.join(", ")}."
+      end
+    end  
+    
     # A class that supports both the Element and Attribute models.
     # Used as a base class for classes wanting to take advantage of a full Xml body.
     class Body
@@ -46,6 +57,7 @@ module Siffer
         write(values)
         check_mandatory(values)
         check_conditional(values)
+        check_must_have(values)
       end
      
       # Overridden to assure comparison is done by string.
@@ -99,8 +111,8 @@ module Siffer
             xml.tag!(*args) # just write xml closed tag
           else
             xml.tag!(*args) { |body|
-              values.each do |key, value|
-                write_xml_element(body,key,value)           
+              self.class.declared_values.each do |key|
+                write_xml_element(body,key,values[key])
               end 
             }
           end

@@ -40,6 +40,10 @@ describe Register do
     Register.should conditionally_require(:protocol, {:mode => "Push"})
   end
   
+  it "should require order of elements" do
+    Register.should order_elements(:header, :name, :version, :max_buffer_size, :mode, :protocol, :node_vendor, :node_version, :application, :icon)
+  end
+  
 end
 
 describe Unregister do

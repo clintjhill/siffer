@@ -28,16 +28,8 @@ describe Response do
     Response.should require(:more_packets)
   end
   
-  it "should conditionally require error on no object data and no extended query results" do
-    Response.should conditionally_require(:error, :object_data => nil, :extended_query_results => nil)
+  it "should have one of :error, :object_data, :extended_query_result" do
+    Response.should must_have(:error,:object_data,:extended_query_results)
   end
-  
-  it "should conditionally require object data on no error and no extended query results" do
-    Response.should conditionally_require(:object_data, :error => nil, :extended_query_results => nil)
-  end
-  
-  it "should conditionally require extended query results on no error and no object data" do
-    Response.should conditionally_require(:extended_query_results, :error => nil, :object_data => nil)
-  end
-  
+    
 end

@@ -36,12 +36,8 @@ describe Ack do
     Ack.should require(:original_msg_id)
   end
   
-  it "should conditionally require error on nil status" do
-    Ack.should conditionally_require(:error, :status => nil)
-  end
-  
-  it "should conditionally require status on nil error" do
-    Ack.should conditionally_require(:status, :error => nil)
+  it "should must have :error, :status" do
+    Ack.should must_have(:status, :error)
   end
   
   it "should be nested in message" do

@@ -37,8 +37,10 @@ module Siffer
       element :mode, :type => :mandatory
       element :protocol, :type => :conditional, :conditions => {:mode => "Push"}
       element :node_vendor
+      element :node_version
       element :application
       element :icon
+      order_elements :name, :version, :max_buffer_size, :mode, :protocol, :node_vendor, :node_version, :application, :icon
     end
     
     # This message allows an agent to remove any association it has with the ZIS.

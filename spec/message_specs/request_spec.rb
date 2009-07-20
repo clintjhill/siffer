@@ -24,12 +24,8 @@ describe Query do
     Query.should require(:query_object)
   end
   
-  it "should conditionally require condition group if no example" do
-    Query.should conditionally_require(:condition_group, :example => nil)
-  end
-  
-  it "should conditionally require example if no condition group" do
-    Query.should conditionally_require(:example, :condition_group => nil)
+  it "should must have :condition_group, :example" do
+    Query.should must_have(:condition_group, :example)
   end
   
 end
@@ -88,12 +84,8 @@ describe Request do
     Request.should require(:max_buffer_size)
   end
   
-  it "should conditionally require query if no extended query" do
-    Request.should conditionally_require(:query, :extended_query => nil)
-  end
-  
-  it "should conditionally require extended query if no query" do
-    Request.should conditionally_require(:extended_query, :query => nil)
+  it "should must have :query, :extended_query" do
+    Request.should must_have(:query, :extended_query)
   end
   
 end

@@ -9,8 +9,15 @@ module Siffer
         # Class instance array of declared values (elements)
         # @return [Array]
         def declared_values
-          declared = []
-          declared << @declared_values
+          declared = []          
+          unless @declared_values.nil?
+            unless @order_elements.nil?
+             @order_elements.each do |element|
+               declared << element if @declared_values.include?(element)
+             end
+            end
+            declared << @declared_values - (@order_elements || []) 
+          end
           declared.flatten
         end
         
@@ -30,20 +37,24 @@ module Siffer
           conditioned
         end
         
+        def must_have_one
+          must_haves = []
+          must_haves += @must_have_one_values unless @must_have_one_values.nil?
+          must_haves
+        end
+        
         # Creates an element for the instance. Adds a getter/setter
         # and populates the mandatory and conditional
         # arrays accordingly based on the options provided.
         # @param [String] name the name of the element to create
         # @option options [Symbol] :type The type of element (:mandatory,:optional,:conditional)
-        # @option options [Array] :conditions A list of elements in this class that this value is dependent.
-        #   It will not throw an error if any of the conditional elements have value (currently there is no
-        #   AND comparision, only an OR comparison).
+        # @option options [Array] :conditions A list of values in this class that this value is dependent.
         # @example 
         #  class Model
         #   include Element
         #   element :always_needed, :type => :mandatory
         #   element :sometimes_needed
-        #   element :conditionally_needed, :type => :conditional, :conditions => [:sometimes_needed]
+        #   element :conditionally_needed, :type => :conditional, :conditions => [:sometimes_needed => "Sometimes"]
         #  end
         #  @model = Model.new(:always_needed => true, :conditionally_needed => true)
         #
@@ -56,6 +67,19 @@ module Siffer
           @conditional ||= {}
           @mandatory << name if options[:type] == :mandatory
           @conditional[name] = options[:conditions] if options[:type] == :conditional
+        end
+        
+        # Creates a set of values of which one must be included in the 
+        # construction of this instance.
+        def must_have_one_of(*elements)
+          @must_have_one_values ||= []
+          @must_have_one_values += elements
+        end
+        
+        # Assigns an order to the elements declared for this instance
+        def order_elements(*elements)
+          @order_elements ||= []
+          @order_elements += elements
         end
         
         # Returns a hash with all elements and values set from the parsed XML
@@ -139,25 +163,24 @@ module Siffer
           unless self.class.conditional.empty?
             unless values.keys.any?{|v| self.class.conditional.has_key?(v) && values[v]}
               self.class.conditional.each do |element, conditions|
-                
-                # for each condition (if its a hash) lets check values     
-                if conditions.is_a?(Hash)
                   conditions.keys.each do |specified|
-                    # this captures the event that "specified" triggers and error when it matches 
+                    # this captures the event that "specified" triggers an error when it matches 
                     # a particular value such as:
                     # Register should require Protocol when Mode == Push
                     if values[specified] == conditions[specified]
                       raise ConditionalError.new(element,conditions,self.class)
                     end
                   end
-                end
-                
-                # # if all of the conditions exist in the values then it's good
-                unless conditions.all?{|k,v| values.has_key?(k)}
-                  raise ConditionalError.new(element,conditions,self.class)
-                end
-                                
               end
+            end
+          end
+        end
+        
+        # Validates that must have values are met (at least 1)
+        def check_must_have(values)
+          unless self.class.must_have_one.empty?
+            unless self.class.must_have_one.any?{|v| values.has_key?(v) and values[v]}
+              raise MustHaveError.new(self.class.must_have_one, self.class)
             end
           end
         end
@@ -178,7 +201,9 @@ module Siffer
               body.tag!(element_name(name)){ |tag| tag << val.to_s }
             end
           else
-            body.tag!(element_name(name)){ |tag| tag << value.to_s }
+            unless value.nil?
+              body.tag!(element_name(name)){ |tag| tag << value.to_s }
+            end
           end
         end
         

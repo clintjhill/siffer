@@ -33,7 +33,34 @@ Spec::Matchers.define :conditionally_require do |field, conditions|
       return false # if no exception thrown the spec fails
     rescue Exception => e
       # if the exception is a CondiionalError and the message matches our field GOOD!!!
-      e.is_a?(Siffer::Xml::ConditionalError) && e.message.match(/#{field.to_s.camelize}/)
+      e.is_a?(Siffer::Xml::ConditionalError) && e.message.match(/#{field.to_s.camelize} is mandatory/) 
     end
+  end
+end
+
+Spec::Matchers.define :must_have do |*fields|
+  match do |obj|
+    # get all declared elements
+    declared = obj.declared_values
+    # fill them all with a value of 1
+    filled = declared.inject({}){|acc,name| acc.merge(name => 1)}
+    fields.each{|field| filled.delete(field)}
+    begin
+      obj.new(filled)
+      return false
+    rescue Exception => e
+      e.is_a?(Siffer::Xml::MustHaveError) && e.message.match(/must have one of #{fields.join(", ")}/)
+    end
+  end
+end
+
+Spec::Matchers.define :order_elements do |*fields|
+  match do |obj|
+    ordered = false
+    fields.each_with_index do |field,index|
+      ordered = obj.declared_values[index] == field
+      break unless ordered
+    end
+    ordered
   end
 end

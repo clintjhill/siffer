@@ -39,9 +39,10 @@ module Siffer
       element :request_msg_id, :type => :mandatory
       element :packet_number, :type => :mandatory
       element :more_packets, :type => :mandatory
-      element :error, :type => :conditional, :conditions => [:object_data, :extended_query_results]
-      element :object_data, :type => :conditional, :conditions => [:error, :extended_query_results]
-      element :extended_query_results, :type => :conditional, :conditions => [:error, :object_data]
+      element :error
+      element :object_data
+      element :extended_query_results
+      must_have_one_of :error,:object_data,:extended_query_results
     end
     
   end

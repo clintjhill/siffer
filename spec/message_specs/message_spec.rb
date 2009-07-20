@@ -24,6 +24,10 @@ describe Header do
     @header.msg_id.should_not match(/^[a-z\-\s]+$/)
     @header.msg_id.should match(/^[A-F0-9]{32}$/)
   end
+  
+  it "should order elements :msg_id, :timestamp, :security, :source_id, :destination_id, :contexts" do
+    Header.should order_elements(:msg_id, :timestamp, :security, :source_id, :destination_id, :contexts)
+  end
     
 end
 
@@ -43,6 +47,10 @@ describe SecureChannel do
   
   it "should require encryption level" do
     SecureChannel.should require(:encryption_level)
+  end
+  
+  it "should order authentication_level, encryption_level" do
+    SecureChannel.should order_elements(:authentication_level, :encryption_level)
   end
   
 end

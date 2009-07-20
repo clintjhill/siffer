@@ -22,8 +22,9 @@ module Siffer
     # SecureChannel Element for the Security Element
     #@see Security
     class SecureChannel < SifXml
-      element :authentication_level, :type => :mandatory
       element :encryption_level, :type => :mandatory
+      element :authentication_level, :type => :mandatory
+      order_elements :authentication_level, :encryption_level
     end
     
     # List of Contexts for the Message
@@ -40,13 +41,14 @@ module Siffer
       element :source_id, :type => :mandatory
       element :destination_id
       element :contexts
+      order_elements :msg_id, :timestamp, :security, :source_id, :destination_id, :contexts
       
       # Overloaded to provide defaults for Security, MsgId and Timestamp
       def initialize(values ={})
         values = values[:header] if values.has_key?(:header)
         super({:source_id => values[:source_id], 
               :msg_id => values[:msg_id] || UUID.generate(:compact).upcase,
-              :timestamp => values[:timestamp] || Time.now,
+              :timestamp => values[:timestamp] || Time.now.strftime("%Y-%m-%dT%H:%M:%SZ"),
               :security => create_security(values),
               :destionation_id => values[:destination_id],
               :contexts => values[:contexts]})
@@ -81,6 +83,7 @@ module Siffer
       attribute :xmlns, Siffer.sif_xmlns
       attribute :version, Siffer.sif_version
       element :header, :type => :mandatory
+      order_elements :header
       
       # Inspects values for :header and if exists injects new Header
       def initialize(values = {})
@@ -96,8 +99,15 @@ module Siffer
         def declared_values
           declared = super
           if subclass_of_message
-            unless superclass.instance_variable_get("@declared_values").nil?
-              declared << superclass.instance_variable_get("@declared_values")
+            sub_declared = superclass.instance_variable_get("@declared_values")
+            unless sub_declared.nil?
+              sub_ordered = superclass.instance_variable_get("@order_elements")
+              unless sub_ordered.nil?
+                sub_ordered.each do |element|
+                  declared.insert(0, element) if sub_declared.include?(element)
+                end
+              end
+              declared << sub_declared - (sub_ordered || [])
             end
           end
           declared.flatten
@@ -121,6 +131,16 @@ module Siffer
             end
           end
           conditioned
+        end
+        
+        def must_have_one
+          must_have = super
+          if subclass_of_message
+            unless superclass.instance_variable_get("@must_have_one_values").nil?
+              must_have += superclass.instance_variable_get("@must_have_one_values")
+            end
+          end
+          must_have
         end
         
         # Returns true if this instance is not a Message and its parent class is a Message.
