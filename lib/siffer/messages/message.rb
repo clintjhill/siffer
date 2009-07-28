@@ -146,6 +146,16 @@ module Siffer
           must_have
         end
         
+        def must_have_all
+          must_have = super
+          if subclass_of_message
+            unless superclass.instance_variable_get("@must_have_all_values").nil?
+              must_have += superclass.instance_variable_get("@must_have_all_values")
+            end
+          end
+          must_have
+        end
+        
         # Returns true if this instance is not a Message and its parent class is a Message.
         def subclass_of_message
           !instance_of?(Message) && superclass == Message
