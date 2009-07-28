@@ -7,6 +7,15 @@ Framework) in Ruby. The project is Ruby based and includes all of the SIF
 infrastructure (Data Model, Agents, Zone Integration Servers and even database 
 stores). 
 
+Siffer is a platform - not a development kit. Certainly it's open source and
+you can take this code and do as you wish. However, Siffer provides out of the
+box all the things you need to run a SIF environment. 
+
+Simply put you can do one of two things with Siffer:
+
+1) You can download it and run the admin server and setup Servers and Agents. 
+2) You can download it and write the code to build your own Servers and Agents.
+
 
 It's currently incomplete - Stay Tuned!
 
@@ -23,6 +32,10 @@ deployment of SIF easy.
 Make SIF more REST'ful. As much as possible expose the actions and data models
 through the URI and URL of ZIS and Agent components.
 
+Make SIF more useful. As much as possible remove the "XML" and "Database" 
+questions out of the equation. 
+
+
 == Implementation Information (sifinfo.org)
 
 This implementation is based on version 2.3 of the SIF Specification.
@@ -33,6 +46,18 @@ More information here: http://sifinfo.org.
 == Description of Contents
 
 == Useage
+
+% siffer start agent "default agent" -p 8001 -d
+% siffer start server "default zis" -p 8002 -d
+
+% siffer stop agent "default agent"
+% siffer stop server "default zis"
+
+Or from the admin browser !!!
+
+% siffer start admin
+
+open http://0.0.0.0:2828 from any browser and enjoy!
 
 == License
 
@@ -46,13 +71,16 @@ Siffer can be installed from the siffer gem:
 
 == Support
 
-Please contact the author (mailto://clint.hill@h3osoftware.com) for support 
+Please contact the author (clint.hill@h3osoftware.com) for support 
 issues. If you want to contribute do the same. 
 
 === Contributors
 
-This project is developed by spec. Build spec tests for all of your features. 
-Document everything.
+This project is developed by spec. Build spec tests (RSpec) for all of 
+your features. Document everything.
+
+Fork the project and then make a pull request. 
+http://github.com/clinth3o/siffer
 
 == Contact
 

@@ -91,6 +91,8 @@ if daemonize
 end
 
 if command.downcase == "start"
+  include Siffer::Messages
+  include Siffer::Xml
   if component.downcase == "agent"
     Siffer::Agent.set :port, options[:port]
     Siffer::Agent.set :host, options[:host]

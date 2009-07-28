@@ -1,7 +1,7 @@
 module Siffer
-  
+
   class Agent < Sinatra::Base
-    
+
     enable :static
         
     set :root, File.join(File.dirname(__FILE__),"agent")
@@ -28,20 +28,24 @@ module Siffer
     
     post "/register" do
       url = params[:zis_url]
-      # reg_msg = Siffer::Messages::Register.new(
-      #                                  :header => @agent_name,
-      #                                  :version => "2.1",
-      #                                  :mode => "Pull",
-      #                                  :max_buffer_size => 1024,
-      #                                  :name => @agent_name,
-      #                                  :application => Siffer::Messages::Application.new(
-      #                                        :vendor => "h3o(software)",
-      #                                        :version => "2.3",
-      #                                        :product => "Siffer"
-      #                                      )
-      #                                  )
-      #       msg = Siffer::Messages::Message.parse(RestClient.post(url, reg_msg, :content_type => 'application/xml'))
-      #       msg
+      msg = SystemControl.get_zone_status(@agent_name)
+      # msg = Register.new(
+      #          :header => @agent_name,
+      #          :version => Siffer.sif_version,
+      #          :mode => "Pull",
+      #          :max_buffer_size => 1024,
+      #          :name => @agent_name,
+      #          :application => Application.new(
+      #                :vendor => "h3o(software)",
+      #                :version => Siffer.version,
+      #                :product => "Siffer"
+      #              )
+      #          )
+      puts msg
+      raw = RestClient.post(url, msg, :content_type => 'application/xml')
+      puts raw
+      return_msg = Message.parse(raw)
+      return_msg
     end
     
   end

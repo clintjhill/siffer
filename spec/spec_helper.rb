@@ -64,3 +64,15 @@ Spec::Matchers.define :order_elements do |*fields|
     ordered
   end
 end
+
+Spec::Matchers.define :be_compliant do
+  match do |msg|
+    begin
+      url = "http://compliance.sifinfo.org/validate/validate.jsp"
+      result = RestClient.post(url, :xml => msg, :type => "SIF_Message")
+      result.match(/class=\'valid\'/)
+    rescue 
+      warn "Not connected to internet - can't test compliance with SIFINFO.ORG!!"
+    end
+  end
+end

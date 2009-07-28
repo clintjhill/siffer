@@ -40,10 +40,4 @@ describe Ack do
     Ack.should must_have(:status, :error)
   end
   
-  it "should be nested in message" do
-    @ack = Ack.new(:header => "Test Ack", :original_source_id => "11111", :original_msg_id => "22222", :status => "good")
-    @ack.should match(/^<SIF_Message/)
-    @ack.should match(/<\/SIF_Message>$/)
-  end
-  
 end

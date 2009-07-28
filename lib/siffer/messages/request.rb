@@ -24,9 +24,9 @@ module Siffer
     # Represents a condition used in a Query
     #@see Conditions
     class Condition < SifXml
-      element :element
-      element :operator
-      element :value
+      element :element, :type => :mandatory
+      element :operator, :type => :mandatory
+      element :value, :type => :mandatory
     end
     
     # List of Conditions
@@ -38,8 +38,6 @@ module Siffer
       def initialize(vals = {})
         if vals.has_key?(:condition) and vals[:condition].is_a?(Array)
           vals[:condition] = vals[:condition].inject([]) {|acc,hash| acc << Condition.new(hash)}
-        else
-          vals[:condition] = Condition.new(vals[:condition]) unless vals.empty?
         end
         super(vals)
       end
@@ -52,8 +50,8 @@ module Siffer
       element :conditions, :type => :mandatory
       
       def initialize(vals = {})
-        if vals.has_key?(:conditions) and vals[:conditions].is_a?(Hash)
-          vals[:conditions] = Conditions.new(vals[:conditions])
+        if vals.has_key?(:conditions)
+          vals[:conditions] = Conditions.new(:condition => vals[:conditions])
         end
         super(vals)
       end

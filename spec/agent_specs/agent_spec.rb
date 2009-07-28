@@ -31,11 +31,6 @@ describe Siffer::Agent do
     last_response.body.should match(/div id='register'>/)
   end
   
-  it "should respond to register" do
-    post "/register"
-    last_response.should be_ok
-  end
-  
   # it "should redirect to index after successful register" do
   #     post "/register", {:zis_url => "tester"}
   #     # need to mock #registered? here

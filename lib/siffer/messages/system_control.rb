@@ -63,7 +63,7 @@ module Siffer
         values[:system_control_data] = GetMessage.new if values.has_key?(:get_message)
         values[:system_control_data] = GetZoneStatus.new if values.has_key?(:get_zone_status)
         values[:system_control_data] = GetAgentACL.new if values.has_key?(:get_agent_acl)
-        values[:system_control_data] = CancelRequests.new(values[:cancel_requests]) if values.has_key?(:cancel_requests)
+        values[:system_control_data] = CancelRequests.new(values[:system_control_data][:cancel_requests]) if values[:system_control_data].is_a?(Hash)
         super(values)
       end
       

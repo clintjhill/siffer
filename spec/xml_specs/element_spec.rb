@@ -58,6 +58,7 @@ describe Element do
     xml = Nokogiri::XML::Document.parse("<Repeated><Value>1</Value><Value>2</Value></Repeated>")
     hash = RepeatedXml.parse_element(xml)
     hash["Repeated"]["Value"].should be_instance_of(Array)
+    hash["Repeated"]["Value"].should have(2).items
   end
     
 end

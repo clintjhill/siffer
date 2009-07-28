@@ -6,6 +6,9 @@ module Siffer
     
     # This class is used as the base for all SIF common types.
     class SifXml < Siffer::Xml::Body
+      def initialize(values = {})
+        super(values)
+      end
       private
       # Overriden to prefix SIF to the element name
       def element_name(name = self.class)
@@ -150,21 +153,31 @@ module Siffer
         
         # Parses raw XML and initializes proper Message
         def parse(document)
-          doc = Nokogiri::XML::Document.parse(document)  
+          doc = Nokogiri::XML(document)  
           raise NonSIFMessage.new unless doc.xml? and doc.namespaces.values.include?(Siffer.sif_xmlns)
+         
           # grab the version for validation later
-          version = doc.children.first.attributes["Version"]
-           
-          # use the first child's children (the first child is the xml doctype)
-          values = doc.children.first.children.inject({}) do |acc, subchild|
-            prop_name = subchild.name.gsub(/SIF_/,"")
-            acc.update(prop_name => parse_element(subchild))
-          end
+          version = doc.root.attributes["Version"]
+          # if version != Siffer.sif_version raise some Exception
           
-          klass = values.keys.first.constantize
+          # grab the class name of the message
+          klass = doc.root.children.first.name.gsub(/SIF_/,"").constantize
+          klass_nodes = doc.root.children.first.children
+          values = klass_nodes.inject({}) do |acc, subchild|
+            prop_name = subchild.name.gsub(/SIF_/,"")
+            
+            if acc.has_key?(prop_name)
+              arry_val = []
+              arry_val << acc[prop_name].recursively_underscore
+              arry_val << parse_element(subchild).recursively_underscore
+              acc.update(prop_name => arry_val.flatten)
+            else
+              acc.update(prop_name => parse_element(subchild))
+            end
+
+          end
           values.recursively_underscore
-          props = values[values.keys.first]
-          klass.new(props)
+          klass.new(values)
         end
       end
       

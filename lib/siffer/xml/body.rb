@@ -33,12 +33,13 @@ module Siffer
     
     # Thrown when one of a set of conditions is missing
     class MustHaveError < Exception
-      def initialize(conditions,klass)
+      def initialize(conditions,klass,quantity="one")
         @conditions = conditions
         @klass = klass
+        @quantity = quantity
       end
       def message
-        "#{@klass} must have one of #{@conditions.join(", ")}."
+        "#{@klass} must have #{@quantity} of #{@conditions.join(", ")}."
       end
     end  
     
@@ -82,26 +83,23 @@ module Siffer
       end
       
       # Delegates to XML for checking
-      # ??? Added to allow easier calls to Nokogiri
       def empty?
         to_xml.empty?
       end
       
       # Delegates to XML for checking
-      # ??? Added to allow RESTClient to work
       def size
         to_xml.size
       end
       
       # Delegates to XML for checking
-      # ??? Added to allow RESTClient to work
       def length
         to_xml.length
       end
 
       alias :to_str :to_xml
       alias :to_s :to_xml 
-      alias :inspect :to_xml
+      alias :bytesize :length
       
       private 
         # Writes the body of the XML document. Includes attributes for the class instance.

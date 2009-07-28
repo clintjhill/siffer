@@ -43,6 +43,12 @@ module Siffer
           must_haves
         end
         
+        def must_have_all
+          must_haves = []
+          must_haves += @must_have_all_values unless @must_have_all_values.nil?
+          must_haves
+        end
+        
         # Creates an element for the instance. Adds a getter/setter
         # and populates the mandatory and conditional
         # arrays accordingly based on the options provided.
@@ -69,11 +75,18 @@ module Siffer
           @conditional[name] = options[:conditions] if options[:type] == :conditional
         end
         
-        # Creates a set of values of which one must be included in the 
+        # Creates a set of values of which *one* must be included in the 
         # construction of this instance.
         def must_have_one_of(*elements)
           @must_have_one_values ||= []
           @must_have_one_values += elements
+        end
+        
+        # Creates a set of values of which *all* must be included in the
+        # construction of this instance.
+        def must_have_all_of(*elements)
+          @must_have_all_values ||= []
+          @must_have_all_values += elements
         end
         
         # Assigns an order to the elements declared for this instance
@@ -85,48 +98,51 @@ module Siffer
         # Returns a hash with all elements and values set from the parsed XML
         #@return Hash
         def parse_element(xml)
-          xml.children.inject({}) do |acc, child|
-            child_name = child.name.gsub(/SIF_/,'')
-            if child.children.size >= 1
-              # if there is only 1 child and it's a text
-              if child.children.size == 1 and child.child.text?
+          if xml.children.empty?
+            xml.attributes
+          else
+            xml.children.inject({}) do |acc, child|
+              child_name = child.name.gsub(/SIF_/,'')
+              if child.children.size >= 1
+                # if there is only 1 child and it's a text
+                if child.children.size == 1 and child.child.text?
+                  # If the child is repeated, turn into an array of values
+                  # otherwise it will simply overwrite previous values
+                  if acc.has_key?(child_name)
+                    arry_val = []
+                    arry_val << acc[child_name]
+                    arry_val << child.child.text
+                    acc.update(child_name => arry_val.flatten)
+                  else
+                    acc.update(child_name => child.child.text)
+                  end
+                else
+                  if acc.has_key?(child_name)
+                    arry_val = []
+                    arry_val << acc[child_name].recursively_underscore
+                    arry_val << parse_element(child).recursively_underscore
+                    acc.update(child_name => arry_val.flatten)
+                  else
+                    acc.update(child_name => parse_element(child))
+                  end
+                end
+              else
+                # The child has no children - which means no text
                 # If the child is repeated, turn into an array of values
-                # otherwise it will simply overwrite previous values
+                # otherwise it will simply overwrite previous values  
+                child.attributes.recursively_underscore            
                 if acc.has_key?(child_name)
                   arry_val = []
                   arry_val << acc[child_name]
-                  arry_val << child.child.text
+                  arry_val << child.attributes
                   acc.update(child_name => arry_val.flatten)
-                else
-                  acc.update(child_name => child.child.text)
+                else  
+                  acc.update(child_name => child.attributes)
                 end
-              else
-                if acc.has_key?(child_name)
-                  arry_val = []
-                  arry_val << acc[child_name].recursively_underscore
-                  arry_val << parse_element(child).recursively_underscore
-                  acc.update(child_name => arry_val.flatten)
-                else
-                  acc.update(child_name => parse_element(child))
-                end
-              end
-            else
-              # The child has no children - which means no text
-              # If the child is repeated, turn into an array of values
-              # otherwise it will simply overwrite previous values  
-              child.attributes.recursively_underscore            
-              if acc.has_key?(child_name)
-                arry_val = []
-                arry_val << acc[child_name]
-                arry_val << child.attributes
-                acc.update(child_name => arry_val.flatten)
-              else  
-                acc.update(child_name => child.attributes)
               end
             end
           end
         end
-
       end
       
       def self.included(base)
@@ -180,7 +196,12 @@ module Siffer
         def check_must_have(values)
           unless self.class.must_have_one.empty?
             unless self.class.must_have_one.any?{|v| values.has_key?(v) and values[v]}
-              raise MustHaveError.new(self.class.must_have_one, self.class)
+              raise MustHaveError.new(self.class.must_have_one, self.class,"one")
+            end
+          end
+          unless self.class.must_have_all.empty?
+            unless self.class.must_have_all.all?{|v| values.has_key?(v) and values[v]}
+              raise MustHaveError.new(self.class.must_have_all, self.class,"all")
             end
           end
         end
@@ -194,8 +215,12 @@ module Siffer
         
         # Writes the data to the XML either as a tag with a value or as a whole MessageElement.
         def write_xml_element(body,name,value)
-          if value.is_a?(Element)
-            body << value
+          if value.is_a?(SifXml)
+            if name.to_s == value.class.name.split("::").last.underscore
+              body << value
+            else
+              body.tag!(element_name(name)){ |tag| tag << value.to_s }
+            end
           elsif value.is_a?(Array)
             value.each do |val|
               body.tag!(element_name(name)){ |tag| tag << val.to_s }
