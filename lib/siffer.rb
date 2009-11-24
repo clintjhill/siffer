@@ -12,7 +12,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 module Siffer
 
     VENDOR = "h3o(software)" unless defined?(Siffer::VENDOR)
-    VERSION = [0,0,7] unless defined?(Siffer::VERSION)
+    VERSION = [0,1,1] unless defined?(Siffer::VERSION)
     SIF_VERSION = [2,3] unless defined?(Siffer::SIF_VERSION)
     SIF_XMLNS = "http://www.sifinfo.org/infrastructure/2.x" unless defined?(Siffer::SIF_XMLNS)
   

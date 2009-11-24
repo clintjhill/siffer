@@ -6,12 +6,11 @@ require 'fileutils'
 require 'yard'
 include FileUtils
 require File.join(File.dirname(__FILE__),"lib","siffer")
-include Siffer
+
 
 spec = Gem::Specification.new do |s|
   s.name = "siffer"
   s.version = Siffer.version
-  s.platform = Gem::Platform::RUBY
   s.author = "Clint Hill"
   s.email = "clint.hill@h3osoftware.com"
   s.homepage = "http://h3osoftware.com/siffer"
@@ -20,15 +19,8 @@ spec = Gem::Specification.new do |s|
     Siffer is a SIF that plans to remove the complexity from the implementation.
     Siffer is SIF done easy. It's also the first entirely done in Ruby!
   EOF
-  s.rubyforge_project = "siffer"
   s.require_path = "lib"
-  s.files        = %w( LICENSE README Rakefile ) + Dir["{spec,lib,doc}/**/*"]
-  s.add_dependency "uuid"
-  s.add_dependency "activesupport"
-  s.add_dependency "builder"
-  s.add_dependency "nokogiri"
-  s.add_dependency "sinatra"
-  s.add_dependency "haml"
+  s.files = FileList['lib/**/*.rb','README','LICENSE']
 end
 
 Rake::GemPackageTask.new(spec) do |package|
