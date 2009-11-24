@@ -1,7 +1,7 @@
 module Siffer
   module Models
-    class Street < Siffer::Xml::Body
-      element :line_1, :type => :mandatory
+    class Street < AcDc::Body
+      element :line_1
       element :line_2
       element :line_3
       element :complex
@@ -16,14 +16,14 @@ module Siffer
       element :apartment_number_suffix
     end
 
-    class GridLocation < Siffer::Xml::Body
+    class GridLocation < AcDc::Body
       element :longitude
       element :latitude
     end
 
-    class Address < Siffer::Xml::Body
+    class Address < AcDc::Body
       attribute :type
-      element :street, :type => :mandatory
+      element :street
       element :city
       element :county
       element :state_province
@@ -32,8 +32,8 @@ module Siffer
       element :grid_location
     end
     
-    class AddressList < Siffer::Xml::Body
-      element :address, :type => :mandatory
+    class AddressList < AcDc::Body
+      element :address
     end
   end
 end

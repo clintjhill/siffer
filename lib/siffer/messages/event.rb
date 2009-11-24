@@ -6,12 +6,12 @@ module Siffer
     # or deletions of data object
     #@see EventObject
     class Event < Message
-      element :object_data, :type => :mandatory
+      element :object_data
     end
     
     # Message Element that holds the data object that is add/change/delete
     #@see Event
-    class EventObject < SifXml
+    class EventObject < AcDc::Body
       attribute :object_name
       attribute :action
     end

@@ -8,64 +8,45 @@ module Siffer
     
     # Sent to detect if a ZIS or push-mode agent is ready to receive and process messages.
     #@see SystemControl
-    class Ping < SifXml; end
+    class Ping < SifElement; end
 
     # Allows an agent to notify a ZIS or a ZIS to notify a push-mode agent that it must not send any more messages to the sender of the SIF_Sleep.
     #@see SystemControl
-    class Sleep < SifXml; end
+    class Sleep < SifElement; end
 
     # This will signal the receiver that the sender is now able to process messages.
     #@see SystemControl
-    class Wakeup < SifXml; end
+    class Wakeup < SifElement; end
     
     # This message tells the ZIS to return the first available message to the agent, subject to Selective Message Blocking.
     #@see SystemControl
-    class GetMessage < SifXml; end
+    class GetMessage < SifElement; end
     
     # This message tells the ZIS to return the current SIF_ZoneStatus in a SIF_Ack.
     #@see SystemControl
-    class GetZoneStatus < SifXml; end
+    class GetZoneStatus < SifElement; end
     
     # This message tells the ZIS to return the Agent's ACL permissions in a SIF_Ack.
     #@see SystemControl
-    class GetAgentACL < SifXml; end
+    class GetAgentACL < SifElement; end
     
     # The list of SIF_Requests to cancel
     #@see CancelRequests
-    class RequestMsgIds < SifXml
-      element :request_msg_id, :type => :mandatory
+    class RequestMsgIds < SifBody
+      element :request_msg_id
     end
     
     # Asks a receiver (ZIS or Push-Mode Agent) to cancel the specified SIF_Requests, pending or in process
     #@see SystemControl
-    class CancelRequests < SifXml 
-      element :notification_type, :type => :mandatory
-      element :request_msg_ids, :type => :mandatory
-      
-      def initialize(values = {})
-        values = values[:cancel_requests] if values.has_key?(:cancel_requests)
-        if values.has_key?(:request_msg_ids) and values[:request_msg_ids].is_a?(Hash)
-          values[:request_msg_ids] = RequestMsgIds.new(values[:request_msg_ids])
-        end
-        super(values)
-      end
+    class CancelRequests < SifBody 
+      element :notification_type
+      element :request_msg_ids
     end
     
     
     # Message designed to control the flow of data between an agent and ZIS or vice-versa.
     class SystemControl < Message
-      element :system_control_data, :type => :mandatory
-      
-      def initialize(values = {})
-        values[:system_control_data] = Ping.new if values.has_key?(:ping)
-        values[:system_control_data] = Sleep.new if values.has_key?(:sleep)
-        values[:system_control_data] = Wakeup.new if values.has_key?(:wakeup)
-        values[:system_control_data] = GetMessage.new if values.has_key?(:get_message)
-        values[:system_control_data] = GetZoneStatus.new if values.has_key?(:get_zone_status)
-        values[:system_control_data] = GetAgentACL.new if values.has_key?(:get_agent_acl)
-        values[:system_control_data] = CancelRequests.new(values[:system_control_data][:cancel_requests]) if values[:system_control_data].is_a?(Hash)
-        super(values)
-      end
+      element :system_control_data, :tag => "SIF_SystemControlData"
       
       class << self
         

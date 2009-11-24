@@ -10,15 +10,15 @@ module Siffer
     # ExtendedQuery. The order must correspend to the order in the ExtendedQuery
     #@see ExtendedQueryResults
     #@see Element
-    class ColumnHeaders < SifXml
+    class ColumnHeaders < SifBody
       element :element
     end
     
-    class R < SifXml
-      element :c, :type => :mandatory
+    class R < SifBody
+      element :c
     end
     
-    class Rows < SifXml
+    class Rows < SifBody
       element :r
     end
     
@@ -26,9 +26,9 @@ module Siffer
     # an ExtendedQuery
     #@see Response
     #@see ReportObject
-    class ExtendedQueryResults < SifXml
-      element :column_headers, :type => :mandatory
-      element :rows, :type => :mandatory
+    class ExtendedQueryResults < SifBody
+      element :column_headers
+      element :rows
     end
     
     # Used to respond to a SIF_Request message.
@@ -36,13 +36,12 @@ module Siffer
     #@see Error
     #@see ExtendedQueryResults
     class Response < Message
-      element :request_msg_id, :type => :mandatory
-      element :packet_number, :type => :mandatory
-      element :more_packets, :type => :mandatory
+      element :request_msg_id
+      element :packet_number
+      element :more_packets
       element :error
       element :object_data
       element :extended_query_results
-      must_have_one_of :error,:object_data,:extended_query_results
     end
     
   end

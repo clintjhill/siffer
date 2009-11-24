@@ -3,27 +3,18 @@ module Siffer
     
     # Element containing Status information
     #@see Ack
-    class Status < SifXml
-      element :code, :type => :mandatory
+    class Status < SifBody
+      element :code
       element :desc
       element :data
-      
-      def initialize(vals = {})
-        vals = vals[:status] if vals.has_key?(:status)
-        if vals.has_key?(:data) and vals[:data].is_a?(Hash)
-          klass = vals[:data][:message].keys.first.to_s.capitalize.constantize
-          vals[:data] = klass.new(vals[:data][:message][vals[:data][:message].keys.first])
-        end
-        super(vals)
-      end
     end
     
     # Element containing Error information
     #@see Ack
-    class Error < SifXml
-      element :category, :type => :mandatory
-      element :code, :type => :mandatory
-      element :desc, :type => :mandatory
+    class Error < SifBody
+      element :category
+      element :code
+      element :desc
       element :extended_desc
     end
     
@@ -32,21 +23,10 @@ module Siffer
     #@see Status
     #@see Error
     class Ack < Message
-      element :original_source_id, :type => :mandatory
-      element :original_msg_id, :type => :mandatory
+      element :original_source_id
+      element :original_msg_id
       element :status
       element :error
-      must_have_one_of :status, :error
-      
-      def initialize(values = {})
-        if values.has_key?(:status) and values[:status].is_a?(Hash)
-          values[:status] = Status.new(values[:status])
-        end
-        if values.has_key?(:error) and values[:error].is_a?(Hash)
-          values[:error] = Error.new(values[:error])
-        end
-        super(values)
-      end
     end
     
     STATUS_CODE = {

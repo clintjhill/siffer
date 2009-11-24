@@ -8,13 +8,13 @@ module Siffer
     }
         
     # Used by Protocl to describe any protocol settings
-    class Property < SifXml
+    class Property < SifBody
       element :name
       element :value
     end
     
     # Contains protocol information regarding a ZIS or Agent.
-    class Protocol < SifXml
+    class Protocol < SifBody
       attribute :type, DEFINED_PROTOCOLS_TYPE[:https]
       attribute :secure, true
       element :url
@@ -22,25 +22,24 @@ module Siffer
     end
     
     # Contains information about the vendor of the product that the agent represents
-    class Application < SifXml
-      element :vendor, :type => :mandatory
-      element :product, :type => :mandatory
-      element :version, :type => :mandatory
+    class Application < SifBody
+      element :vendor
+      element :product
+      element :version
     end
     
     # Register is a message for registering an agent with a ZIS. 
     # An agent must be registered before it sends out messages.
     class Register < Message
-      element :name, :type => :mandatory
-      element :version, :type => :mandatory
-      element :max_buffer_size, :type => :mandatory
-      element :mode, :type => :mandatory
-      element :protocol, :type => :conditional, :conditions => {:mode => "Push"}
+      element :name
+      element :version
+      element :max_buffer_size
+      element :mode
+      element :protocol
       element :node_vendor
       element :node_version
       element :application
       element :icon
-      order_elements :name, :version, :max_buffer_size, :mode, :protocol, :node_vendor, :node_version, :application, :icon
     end
     
     # This message allows an agent to remove any association it has with the ZIS.
