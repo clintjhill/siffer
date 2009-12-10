@@ -7,7 +7,6 @@ require 'yard'
 include FileUtils
 require File.join(File.dirname(__FILE__),"lib","siffer")
 
-
 spec = Gem::Specification.new do |s|
   s.name = "siffer"
   s.version = Siffer.version

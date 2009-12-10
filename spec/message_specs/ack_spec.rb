@@ -2,42 +2,30 @@ require File.join(File.dirname(__FILE__),"..","spec_helper")
 
 include Siffer::Messages
 
-describe Status do
-  
-  it "should require code" do
-    Status.should require(:code)
-  end
-
-end
-
-describe Error do
-
-  it "should require category" do
-    Error.should require(:category)
-  end
-  
-  it "should require code" do
-    Error.should require(:code)
-  end
-  
-  it "should require desc" do
-    Error.should require(:desc)
-  end
-  
-end
-
 describe Ack do
   
+  it "should require original msg id" do
+    lambda {
+      Ack.create(:source => "testing requires")
+    }.should raise_error
+  end
+  
   it "should require original source id" do
-    Ack.should require(:original_source_id)
+    lambda {
+      Ack.create(:source => "test", :original_msg_id => "test")
+    }.should raise_error
   end
   
-  it "should require original message id" do
-    Ack.should require(:original_msg_id)
+  it "should automatically build header" do
+    ack = Ack.create(:source => "testing ack", :original_source_id => "test", :original_msg_id => "test")
+    ack.header.should_not be_nil
+    ack.header.source_id.should == "testing ack"
   end
   
-  it "should must have :error, :status" do
-    Ack.should must_have(:status, :error)
+  it "should allow static status creation" do
+    ack = Ack.status(:status_code => 1, :source => "testing status", :original_source_id => "test", :original_msg_id => "test")
+    ack.status.code.should == 1
+    ack.status.description.should == STATUS_CODE[1]
   end
   
 end

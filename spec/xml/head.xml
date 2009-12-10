@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SIF_Header>
+	<SIF_MsgId>A3E90785EFDA330DACB00785EFDA330E</SIF_MsgId>
+	<SIF_Timestamp>2006-03-11T08:39:49-08:00</SIF_Timestamp>
+	<SIF_Security>
+		<SIF_SecureChannel>
+			<SIF_AuthenticationLevel>3</SIF_AuthenticationLevel>
+			<SIF_EncryptionLevel>4</SIF_EncryptionLevel>
+		</SIF_SecureChannel>
+	</SIF_Security>
+	<SIF_SourceId>RamseyLIB</SIF_SourceId>
+	<SIF_DestinationId>RamseySIS</SIF_DestinationId>
+	<SIF_Contexts>
+		<SIF_Context>SIF_Default</SIF_Context>
+		<SIF_Context>Second Context</SIF_Context>
+	</SIF_Contexts>
+</SIF_Header>
