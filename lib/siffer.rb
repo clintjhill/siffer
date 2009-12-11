@@ -5,7 +5,7 @@ require 'acdc'
 module Siffer
 
     VENDOR = "h3o(software)" 
-    VERSION = [0,1,1]
+    VERSION = [0,1,2]
     SIF_VERSION = [2,3]
     SIF_XMLNS = "http://www.sifinfo.org/infrastructure/2.x"
   

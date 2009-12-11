@@ -13,13 +13,31 @@ spec = Gem::Specification.new do |s|
   s.author = "Clint Hill"
   s.email = "clint.hill@h3osoftware.com"
   s.homepage = "http://h3osoftware.com/siffer"
-  s.summary = "Siffer - School Interoperability Framework by h3o(software)"
+  s.summary = "Siffer #{Siffer.version} - School Interoperability Framework by h3o(software)"
   s.description = <<-EOF
     Siffer is a SIF that plans to remove the complexity from the implementation.
     Siffer is SIF done easy. It's also the first entirely done in Ruby!
   EOF
   s.require_path = "lib"
+  s.rubygems_version = %q{1.3.5}
+  s.post_install_message = %q{Thanks for installing Siffer! It's still incomplete but take a look!}
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.files = FileList['lib/**/*.rb','README','LICENSE']
+  if s.respond_to? :specification_version then
+    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
+    s.specification_version = 3
+
+    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<uuid>, [">= 2.1.0"])
+      s.add_runtime_dependency(%q<acdc>, [">= 0.7.2"])
+    else
+      s.add_dependency(%q<uuid>, [">= 2.1.0"])
+      s.add_dependency(%q<acdc>, [">= 0.7.2"])
+    end
+  else
+    s.add_dependency(%q<uuid>, [">= 2.1.0"])
+    s.add_dependency(%q<acdc>, [">= 0.7.2"])
+  end
 end
 
 Rake::GemPackageTask.new(spec) do |package|
