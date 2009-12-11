@@ -8,7 +8,7 @@ module Siffer
       element :original_source_id, String, :tag => "SIF_OriginalSourceId"
       element :original_msg_id, String, :tag => "SIF_OriginalMsgId"
       element :status, Status
-      #element :error, Error
+      element :error, Error
       
       def self.create(options = {}, &block)
         ack = Ack.new

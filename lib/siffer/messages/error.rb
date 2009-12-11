@@ -18,7 +18,7 @@ module Siffer
         raise "Error Code is required" if error.code.nil?
         raise "Error Description is required" if error.description.nil?
         raise "Error Category is invalid" unless ERROR_CATEGORY.keys.include?(error.category)
-        raise "Error Code is invalid" unless ERROR_CODES[error.category].any?{|codes| codes.keys.include?(error.code)}
+        raise "Error Code is invalid" unless ERROR_CODES[error.category].detect{|codes| codes[0] == error.code}
         error
       end
     end

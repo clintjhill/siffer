@@ -4,33 +4,33 @@ include Siffer::Messages
 
 describe Error do
   
-  it "should require category" do
+  it "should require error_category" do
     lambda{
-      Error.create(:code => 0, :description => "test")
+      Error.create(:error_code => 0, :error_desc => "test")
     }.should raise_error
   end
   
-  it "should require code" do
+  it "should require error_code" do
     lambda{
-      Error.create(:category => 1, :description => "test")
+      Error.create(:error_category => 1, :error_desc => "test")
     }.should raise_error
   end
   
-  it "should require description" do
+  it "should require error_desc" do
     lambda{
-      Error.create(:code => 0, :category => 0)
+      Error.create(:error_code => 0, :error_category => 0)
     }.should raise_error
   end
   
-  it "should require valid category" do
+  it "should require valid error_category" do
     lambda{
-      Error.create(:category => 1000, :code => 0, :description => "test")
+      Error.create(:error_category => 1000, :error_code => 0, :error_desc => "test")
     }.should raise_error
   end
   
-  it "should require valid code" do
+  it "should require valid error_code" do
     lambda{
-      Error.create(:category => 1, :code => 1, :description => "test")
+      Error.create(:error_category => 1, :error_code => 19999, :error_desc => "test")
     }.should raise_error
   end
   
